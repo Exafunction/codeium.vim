@@ -44,3 +44,6 @@ endif
 if empty(mapcheck('<M-Bslash>', 'i'))
   imap <M-Bslash> <Plug>(codeium-complete)
 endif
+
+call s:SetStyle()
+call codeium#server#Start()

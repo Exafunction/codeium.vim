@@ -1,7 +1,3 @@
-let g:_codeium_version = '1.0.0'
-let g:ide = 'jetbrains'
-let g:api_key = ''
-
 let s:hlgroup = 'CodeiumSuggestion'
 let s:annot_hlgroup = 'CodeiumAnnotation'
 let s:request_nonce = 0
@@ -12,13 +8,6 @@ endif
 if empty(prop_type_get(s:annot_hlgroup))
   call prop_type_add(s:annot_hlgroup, {'highlight': s:annot_hlgroup})
 endif
-
-function! s:Log(str) abort
-  let fname = expand('~') . '/codeium.log'
-  execute 'redir >> ' . l:fname
-  echo a:str
-  redir END
-endfunction
 
 function! codeium#CompletionText() abort
   try
@@ -65,6 +54,7 @@ function! codeium#Accept() abort
       let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
     endif
 
+    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), "completion_id": current_completion.completion.completion_id})
     return delete_text . insert_text
   endif
 
@@ -72,16 +62,20 @@ function! codeium#Accept() abort
 endfunction
 
 function! s:HandleCompletionsResult(out, status) abort
-  let response_text = join(a:out, '')
-  if empty(response_text)
-    call s:Log('Null response')
-  elseif exists('b:_codeium_completions')
-    let response = json_decode(response_text)
-    let completionItems = response->get('completionItems', [])
+  if exists('b:_codeium_completions')
+    let response_text = join(a:out, '')
+    try
+      let response = json_decode(response_text)
+      let completionItems = response->get('completionItems', [])
 
-    let b:_codeium_completions.items = completionItems
-    let b:_codeium_completions.index = 0
-    call s:RenderCurrentCompletion()
+      let b:_codeium_completions.items = completionItems
+      let b:_codeium_completions.index = 0
+
+      call s:RenderCurrentCompletion()
+    catch
+      call codeium#log#Error("Invalid response from language server")
+      call codeium#log#Exception()
+    endtry
   endif
 endfunction
 
@@ -111,7 +105,7 @@ function! s:RenderCurrentCompletion() abort
   let start_offset = current_completion.range->get('startOffset', 0)
   let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset + 1)
   if start_row != line('.')
-    call s:Log("Ignoring completion, line number is not the current line.")
+    call codeium#log#Info("Ignoring completion, line number is not the current line.")
     return ''
   endif
 
@@ -147,46 +141,20 @@ function! s:RenderCurrentCompletion() abort
   endfor
 endfunction
 
-function! s:GetCompletionRequestData() abort
-  let metadata = {
-        \ "api_key": g:api_key,
-        \ "ide_name":  g:ide,
-        \ "extension_version":  g:_codeium_version,
-        \ }
-
-  let document = codeium#doc#GetCurrentDocument()
-  let editor_options = codeium#doc#GetEditorOptions()
-
-  let api_server_params = {
-        \ "api_timeout_ms": 5000,
-        \ "first_temperature":0.2,
-        \ "max_completions": 10,
-        \ "max_newlines":20,
-        \ "max_tokens":256,
-        \ "min_log_probability":-15.0,
-        \ "temperature":0.2,
-        \ "top_k":50,
-        \ "top_p":1.0
-        \ }
-
-  return {
-        \ "metadata": metadata,
-        \ "document": document,
-        \ "editor_options": editor_options,
-        \ "api_server_params": api_server_params
-        \ }
-endfunction
-
 function! codeium#Clear(...) abort 
   if exists('g:_codeium_timer')
     call timer_stop(remove(g:, '_codeium_timer'))
   endif
 
-  " Cancel anny existing request.
+  " Cancel any existing request.
   if exists('b:_codeium_completions')
     let request_id = b:_codeium_completions->get('request_id', 0)
     if request_id > 0
-      call codeium#server#Request('42100', 'CancelRequest', {'request_id': request_id})
+      try
+        call codeium#server#Request('CancelRequest', {'request_id': request_id})
+      catch
+        call codeium#log#Exception()
+      endtry
     endif
     call s:RenderCurrentCompletion()
     unlet! b:_codeium_completions
@@ -235,7 +203,23 @@ function! codeium#Complete(...) abort
     call timer_stop(remove(g:, '_codeium_timer'))
   endif
 
-  let data = s:GetCompletionRequestData()
+  let data = {
+        \ "metadata": codeium#server#RequestMetadata(),
+        \ "document": codeium#doc#GetCurrentDocument(),
+        \ "editor_options": codeium#doc#GetEditorOptions(),
+        \ "api_server_params": {
+        \   "api_timeout_ms": 5000,
+        \   "first_temperature":0.2,
+        \   "max_completions": 10,
+        \   "max_newlines":20,
+        \   "max_tokens":256,
+        \   "min_log_probability":-15.0,
+        \   "temperature":0.2,
+        \   "top_k":50,
+        \   "top_p":1.0
+        \ }
+        \ }
+    
   if exists('b:_codeium_completions.request_data') && b:_codeium_completions.request_data ==# data
     return
   endif
@@ -247,13 +231,17 @@ function! codeium#Complete(...) abort
   let request_id = s:request_nonce
   let data.metadata.request_id = request_id
 
-  let request_job = codeium#server#Request('42100', 'GetCompletions', data, function('s:HandleCompletionsResult', []))
+  try
+    let request_job = codeium#server#Request('GetCompletions', data, function('s:HandleCompletionsResult', []))
 
-  let b:_codeium_completions = {
-        \ "request_data": request_data,
-        \ "request_id": request_id,
-        \ "job": request_job
-        \ }
+    let b:_codeium_completions = {
+          \ "request_data": request_data,
+          \ "request_id": request_id,
+          \ "job": request_job
+          \ }
+  catch
+    call codeium#log#Exception()
+  endtry
 endfunction
 
 function! codeium#DebouncedComplete(...) abort
