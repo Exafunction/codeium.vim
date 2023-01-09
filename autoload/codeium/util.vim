@@ -32,7 +32,7 @@ endfunction
 function! codeium#util#OffsetToPosition(offset) abort
   " Ideally we could just use byte2line, but encoding might not be UTF-8.
   let line_ending_len = len(codeium#util#LineEndingChars())
-  let char_offset = a:offset 
+  let char_offset = a:offset + 1
   let row = 1
 
   for line in getline(1, '$')

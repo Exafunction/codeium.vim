@@ -48,21 +48,29 @@ function! codeium#server#Request(type, data, ...) abort
               \ '--data', json_encode(a:data)
               \ ]
   let result = {"out": []}
-  let Callback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
-  return job_start(args, {
-              \ 'out_mode': 'raw',
-              \ 'out_cb': { channel, data -> add(result.out, data) },
-              \ 'exit_cb': { job, status -> s:OnExit(result, status, Callback) },
-              \ 'close_cb': { channel -> s:OnClose(result, Callback) }
-              \ })
+  let ExitCallback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
+  if has('nvim')
+    return jobstart(args, {
+                \ 'on_stdout': { channel, data, t -> add(result.out, join(data, "\n")) },
+                \ 'on_exit': { job, status, t -> ExitCallback(result.out, status) },
+                \ })
+  else
+    return job_start(args, {
+                \ 'out_mode': 'raw',
+                \ 'out_cb': { channel, data -> add(result.out, data) },
+                \ 'exit_cb': { job, status -> s:OnExit(result, status, ExitCallback) },
+                \ 'close_cb': { channel -> s:OnClose(result, ExitCallback) }
+                \ })
+  endif
 endfunction
 
 function! s:FindPort(dir, timer) abort
   let time = localtime()
-  for file in readdirex(a:dir)
-    if time - file.time <= 1 && file.type == "file"
-      call codeium#log#Info("Found port: " . file.name)
-      let s:server_port = file.name
+  for name in readdir(a:dir)
+    let path = a:dir . '/' . name
+    if time - getftime(path) <= 1 && getftype(path) == "file"
+      call codeium#log#Info("Found port: " . name)
+      let s:server_port = name
       call timer_stop(a:timer)
       break
     endif
@@ -125,10 +133,16 @@ function! codeium#server#Start() abort
         \ ]
 
   call codeium#log#Info("Launching server with manager_dir " . manager_dir)
-  let s:server_job = job_start(args, {
-              \ 'out_mode': 'raw',
-              \ 'err_cb': { channel, data -> codeium#log#Info("[SERVER] " . data) },
-              \ })
+  if has('nvim')
+    let s:server_job = jobstart(args, {
+                \ 'on_stderr': { channel, data, t -> codeium#log#Info("[SERVER] " . join(data, "\n")) },
+                \ })
+  else
+    let s:server_job = job_start(args, {
+                \ 'out_mode': 'raw',
+                \ 'err_cb': { channel, data -> codeium#log#Info("[SERVER] " . data) },
+                \ })
+  endif
   call timer_start(500, function('s:FindPort', [manager_dir]), {'repeat': -1})
   call timer_start(5000, function('s:SendHeartbeat', []), {'repeat': -1})
 endfunction

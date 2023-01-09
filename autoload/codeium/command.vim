@@ -23,21 +23,26 @@ function! s:Uuid() abort
 endfunction
 
 function! s:ConfigDir() abort
-  let config_dir = $XDG_CONFIG_HOME ?? $HOME . '/.config'
+  let config_dir = $XDG_CONFIG_HOME
+  if empty(config_dir)
+    let config_dir = $HOME . '/.config'
+  endif
   return config_dir . '/codeium'
 endfunction
 
-function! s:LoadApiKey() abort
+function! s:LoadConfig() abort
   let config_path = s:ConfigDir() . '/config.json'
-  if !filereadable(config_path)
-    return ''
+  if filereadable(config_path)
+    let contents = join(readfile(config_path), '')
+    if !empty(contents)
+      return json_decode(contents)
+    endif
   endif
 
-  let config = json_decode(join(readfile(config_path), '') ?? "{}")
-  return config->get('apiKey', '')
+  return {}
 endfunction
 
-let s:api_key = s:LoadApiKey()
+let s:api_key = s:LoadConfig()->get('apiKey', '')
 
 function! codeium#command#Auth() abort
   let uuid = trim(s:Uuid())
@@ -78,16 +83,14 @@ function! codeium#command#Auth() abort
       let s:api_key = api_key
       let config_dir = s:ConfigDir()
       let config_path = config_dir . '/config.json'
-
-      if filereadable(config_path)
-        let config = json_decode(join(readfile(config_path), '') ?? "{}")
-      else
-        call mkdir(config_dir, "p")
-        let config = {}
-      endif
-
+      let config = s:LoadConfig()
       let config.apiKey = api_key
+
       try
+        if !filereadable(config_path)
+          call mkdir(config_dir, "p")
+        endif
+
         call writefile([json_encode(config)], config_path)
       catch
         call codeium#log#Error("Could not persist api key to config.json")

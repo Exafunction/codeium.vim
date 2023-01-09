@@ -2,11 +2,13 @@ let s:hlgroup = 'CodeiumSuggestion'
 let s:annot_hlgroup = 'CodeiumAnnotation'
 let s:request_nonce = 0
 
-if empty(prop_type_get(s:hlgroup))
-  call prop_type_add(s:hlgroup, {'highlight': s:hlgroup})
-endif
-if empty(prop_type_get(s:annot_hlgroup))
-  call prop_type_add(s:annot_hlgroup, {'highlight': s:annot_hlgroup})
+if !has('nvim')
+  if empty(prop_type_get(s:hlgroup))
+    call prop_type_add(s:hlgroup, {'highlight': s:hlgroup})
+  endif
+  if empty(prop_type_get(s:annot_hlgroup))
+    call prop_type_add(s:annot_hlgroup, {'highlight': s:annot_hlgroup})
+  endif
 endif
 
 function! codeium#CompletionText() abort
@@ -28,8 +30,8 @@ function! codeium#Accept() abort
     let range = current_completion.range
     let start_offset = range->get('startOffset', 0)
     let end_offset = range->get('endOffset', 0)
-    let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset + 1)
-    let [end_row, end_col] = codeium#util#OffsetToPosition(end_offset + 1)
+    let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
+    let [end_row, end_col] = codeium#util#OffsetToPosition(end_offset)
     let suffix = current_completion.completion->get('suffix', {})
     let suffix_text = suffix->get('text', '')
 
@@ -54,7 +56,7 @@ function! codeium#Accept() abort
       let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
     endif
 
-    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), "completion_id": current_completion.completion.completion_id})
+    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), "completion_id": current_completion.completion.completionId})
     return delete_text . insert_text
   endif
 
@@ -90,9 +92,23 @@ function! s:GetCurrentCompletionItem() abort
   return v:null
 endfunction
 
+let s:nvim_extmark_ids = []
+
+function! s:ClearCompletion() abort
+  if has('nvim')
+    let namespace = nvim_create_namespace('codeium')
+    for id in s:nvim_extmark_ids
+      call nvim_buf_del_extmark(0, namespace, id)
+    endfor
+    let s:nvim_extmark_ids = []
+  else
+    call prop_remove({'type': s:hlgroup, 'all': v:true})
+    call prop_remove({'type': s:annot_hlgroup, 'all': v:true})
+  endif
+endfunction
+
 function! s:RenderCurrentCompletion() abort
-  call prop_remove({'type': s:hlgroup, 'all': v:true})
-  call prop_remove({'type': s:annot_hlgroup, 'all': v:true})
+  call s:ClearCompletion()
 
   if mode() !~# '^[iR]' || (v:false && pumvisible())
     return ''
@@ -103,7 +119,7 @@ function! s:RenderCurrentCompletion() abort
   endif
 
   let start_offset = current_completion.range->get('startOffset', 0)
-  let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset + 1)
+  let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
   if start_row != line('.')
     call codeium#log#Info("Ignoring completion, line number is not the current line.")
     return ''
@@ -111,33 +127,56 @@ function! s:RenderCurrentCompletion() abort
 
   let parts = current_completion->get('completionParts', [])
 
-  let is_first_inline = v:true
+  let idx = 0
   for part in parts
-    let [row, col] = codeium#util#OffsetToPosition(part.offset + 1)
-    if part.type == 'COMPLETION_PART_TYPE_INLINE'
-      let text = part.text
-      if is_first_inline
-        let cursor_col = col('.')
-        let typed = strpart(getline('.'), col - 1, cursor_col - 1)
-        if strpart(text, 0, len(typed)) != typed
-          call prop_remove({'type': s:hlgroup, 'all': v:true})
-          call prop_remove({'type': s:annot_hlgroup, 'all': v:true})
-          return ''
-        endif
-        let text = strpart(text, len(typed))
-        let col += len(typed)
-        let is_first_inline = v:false
+    let [row, col] = codeium#util#OffsetToPosition(part.offset)
+    let text = part.text
+
+    if part.type == 'COMPLETION_PART_TYPE_INLINE' && idx == 0
+      " For first inline completion, strip any characters the user has typed
+      " that match the start of the completion.
+      let cursor_col = col('.')
+      let typed = strpart(getline('.'), col - 1, cursor_col - 1)
+      if strpart(text, 0, len(typed)) != typed
+        call s:ClearCompletion()
+        return ''
       endif
-      call prop_add(row, col, {'type': s:hlgroup, 'text': text})
-    elseif part.type == 'COMPLETION_PART_TYPE_BLOCK'
-      let text = split(part.text, "\n", 1)
-      if empty(text[-1])
-        call remove(text, -1)
-      endif
-      for line in text
-        call prop_add(row, 0, {'type': s:hlgroup, 'text_align': 'below', 'text': line})
-      endfor
+      let text = strpart(text, len(typed))
+      let col += len(typed)
     endif
+
+    if has('nvim')
+      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': virtcol('.') - 1}
+      if part.type == 'COMPLETION_PART_TYPE_INLINE'
+        let data.virt_text = [[text, s:hlgroup]]
+      elseif part.type == 'COMPLETION_PART_TYPE_BLOCK'
+        let lines = split(text, "\n", 1)
+        if empty(lines[-1])
+          call remove(lines, -1)
+        endif
+        let data.virt_lines = map(lines, { _, l -> [[l, s:hlgroup]] })
+      else
+        continue
+      endif
+
+      call add(s:nvim_extmark_ids, data.id)
+      call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, col - 4, data)
+    else
+      if part.type == 'COMPLETION_PART_TYPE_INLINE'
+        call prop_add(row, col, {'type': s:hlgroup, 'text': text})
+      elseif part.type == 'COMPLETION_PART_TYPE_BLOCK'
+        let text = split(part.text, "\n", 1)
+        if empty(text[-1])
+          call remove(text, -1)
+        endif
+
+        for line in text
+          call prop_add(row, 0, {'type': s:hlgroup, 'text_align': 'below', 'text': line})
+        endfor
+      endif
+    endif
+
+    let idx = idx + 1
   endfor
 endfunction
 
