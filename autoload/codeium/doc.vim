@@ -75,11 +75,11 @@ function! codeium#doc#GetCurrentDocument() abort
   endif
 
   let filetype = substitute(&filetype, '\..*', '', '')
-  let language = s:filetype_aliases->get(empty(filetype) ? "text" : filetype, filetype)
+  let language = get(s:filetype_aliases, empty(filetype) ? "text" : filetype, filetype)
 
   let doc = {
         \ "text": join(lines, codeium#util#LineEndingChars()),
-        \ "language": s:language_enum->get(language, 0),
+        \ "language": get(s:language_enum, language, 0),
         \ "cursor_offset": codeium#util#PositionToOffset('.', '.'),
         \ }
 

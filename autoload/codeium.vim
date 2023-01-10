@@ -28,12 +28,12 @@ function! codeium#Accept() abort
   let current_completion = s:GetCurrentCompletionItem()
   if current_completion isnot v:null
     let range = current_completion.range
-    let start_offset = range->get('startOffset', 0)
-    let end_offset = range->get('endOffset', 0)
+    let start_offset = get(range, 'startOffset', 0)
+    let end_offset = get(range, 'endOffset', 0)
     let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
     let [end_row, end_col] = codeium#util#OffsetToPosition(end_offset)
-    let suffix = current_completion.completion->get('suffix', {})
-    let suffix_text = suffix->get('text', '')
+    let suffix = get(current_completion.completion, 'suffix', {})
+    let suffix_text = get(suffix, 'text', '')
 
     let text = current_completion.completion.text . suffix_text
     if empty(text)
@@ -68,7 +68,7 @@ function! s:HandleCompletionsResult(out, status) abort
     let response_text = join(a:out, '')
     try
       let response = json_decode(response_text)
-      let completionItems = response->get('completionItems', [])
+      let completionItems = get(response, 'completionItems', [])
 
       let b:_codeium_completions.items = completionItems
       let b:_codeium_completions.index = 0
@@ -86,7 +86,7 @@ function! s:GetCurrentCompletionItem() abort
         \ has_key(b:_codeium_completions, 'items') && 
         \ has_key(b:_codeium_completions, 'index') && 
         \ b:_codeium_completions.index < len(b:_codeium_completions.items)
-    return b:_codeium_completions.items->get(b:_codeium_completions.index)
+    return get(b:_codeium_completions.items, b:_codeium_completions.index)
   endif
 
   return v:null
@@ -118,14 +118,14 @@ function! s:RenderCurrentCompletion() abort
     return ''
   endif
 
-  let start_offset = current_completion.range->get('startOffset', 0)
+  let start_offset = get(current_completion.range, 'startOffset', 0)
   let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
   if start_row != line('.')
     call codeium#log#Info("Ignoring completion, line number is not the current line.")
     return ''
   endif
 
-  let parts = current_completion->get('completionParts', [])
+  let parts = get(current_completion, 'completionParts', [])
 
   let idx = 0
   for part in parts
@@ -187,7 +187,7 @@ function! codeium#Clear(...) abort
 
   " Cancel any existing request.
   if exists('b:_codeium_completions')
-    let request_id = b:_codeium_completions->get('request_id', 0)
+    let request_id = get(b:_codeium_completions, 'request_id', 0)
     if request_id > 0
       try
         call codeium#server#Request('CancelRequest', {'request_id': request_id})

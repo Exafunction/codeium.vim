@@ -42,7 +42,7 @@ function! s:LoadConfig() abort
   return {}
 endfunction
 
-let s:api_key = s:LoadConfig()->get('apiKey', '')
+let s:api_key = get(s:LoadConfig(), 'apiKey', '')
 
 function! codeium#command#Auth() abort
   let uuid = trim(s:Uuid())
@@ -72,7 +72,7 @@ function! codeium#command#Auth() abort
             \ '--data ' . "'" . json_encode({'firebase_id_token': auth_token}) . "'"
       let response = system(command)
       let res = json_decode(response)
-      let api_key = res->get('api_key', '')
+      let api_key = get(res, 'api_key', '')
       if empty(api_key)
         let auth_token = input('Invalid token, please try again: ')
       endif

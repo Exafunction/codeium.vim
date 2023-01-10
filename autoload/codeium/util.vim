@@ -6,7 +6,7 @@ let s:line_endings = {
 
 function! codeium#util#LineEndingChars(...) abort
   if has_key(s:line_endings, &ff)
-    return s:line_endings->get(&ff)
+    return get(s:line_endings, &ff)
   endif
   if a:0 && !empty(a:1)
     return a:1

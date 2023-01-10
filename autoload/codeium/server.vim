@@ -127,8 +127,8 @@ function! codeium#server#Start() abort
 
   let args = [
         \ bin,
-        \ "--api_server_host", config->get("api_host", "server.codeium.com"),
-        \ "--api_server_port", config->get("api_port", "443"),
+        \ "--api_server_host", get(config, "api_host", "server.codeium.com"),
+        \ "--api_server_port", get(config, "api_port", "443"),
         \ "--manager_dir", manager_dir
         \ ]
 
