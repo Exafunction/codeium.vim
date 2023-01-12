@@ -79,6 +79,7 @@ function! codeium#doc#GetCurrentDocument() abort
 
   let doc = {
         \ "text": join(lines, codeium#util#LineEndingChars()),
+        \ "editor_language": &filetype,
         \ "language": get(s:language_enum, language, 0),
         \ "cursor_offset": codeium#util#PositionToOffset('.', '.'),
         \ }

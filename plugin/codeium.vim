@@ -3,6 +3,12 @@ if exists("g:loaded_codeium")
 endif
 let g:loaded_codeium = 1
 
+command! CodeiumAuth exe codeium#command#Auth()
+
+if !codeium#util#HasSupportedVersion()
+    finish
+endif
+
 function! s:SetStyle() abort
   if &t_Co == 256
     hi def CodeiumSuggestion guifg=#808080 ctermfg=244

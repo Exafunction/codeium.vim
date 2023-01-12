@@ -160,7 +160,7 @@ function! s:RenderCurrentCompletion() abort
       endif
 
       call add(s:nvim_extmark_ids, data.id)
-      call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, col - 4, data)
+      call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, col - 1, data)
     else
       if part.type == 'COMPLETION_PART_TYPE_INLINE'
         call prop_add(row, col, {'type': s:hlgroup, 'text': text})

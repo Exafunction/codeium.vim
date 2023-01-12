@@ -1,5 +1,3 @@
-command! CodeiumAuth exe codeium#command#Auth()
-
 function! codeium#command#BrowserCommand() abort
   if has('win32') && executable('rundll32')
     return 'rundll32 url.dll,FileProtocolHandler'
@@ -45,6 +43,16 @@ endfunction
 let s:api_key = get(s:LoadConfig(), 'apiKey', '')
 
 function! codeium#command#Auth() abort
+  if !codeium#util#HasSupportedVersion()
+    if has('nvim')
+      let min_version = 'NeoVim 0.6'
+    else
+      let min_version = 'Vim 9.0.0185'
+    endif
+    echo "This version of Vim is unsupported. Install " . min_version . " or greater to use Codeium."
+    return
+  endif
+
   let uuid = trim(s:Uuid())
   let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=show-auth-token&state=' . uuid . '&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()

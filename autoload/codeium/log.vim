@@ -4,7 +4,7 @@ endif
 let g:loaded_codeium_log = 1
 
 if !exists('s:logfile')
-  let s:logfile = tempname() . '-codeium.log'
+  let s:logfile = expand(get(g:, 'codeium_log_file', tempname() . '-codeium.log'))
   try
     call writefile([], s:logfile)
   catch
@@ -16,9 +16,10 @@ function! codeium#log#Logfile() abort
 endfunction
 
 function! codeium#log#Log(level, msg) abort
-  let min_level = get(g:, 'codeium_log_level', 'WARN')
+  let min_level = toupper(get(g:, 'codeium_log_level', 'WARN'))
+  " echo "logging to: " . s:logfile . "," . min_level . "," . a:level . "," a:msg
   for level in ['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE']
-    if level == a:level
+    if level == toupper(a:level)
       try
         if filewritable(s:logfile)
           call writefile(split(a:msg, "\n", 1), s:logfile, 'a')

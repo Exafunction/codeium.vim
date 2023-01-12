@@ -1,5 +1,6 @@
 let s:codeium_version = '1.0.0'
 let s:ide = 'jetbrains'
+let s:ide_version = '1.0.0'
 
 let s:server_port = v:null
 let s:server_job = v:null
@@ -32,6 +33,7 @@ function! codeium#server#RequestMetadata() abort
   return {
         \ "api_key": codeium#command#ApiKey(),
         \ "ide_name":  s:ide,
+        \ "ide_version":  s:ide_version,
         \ "extension_version":  s:codeium_version,
         \ }
 endfunction
@@ -68,7 +70,7 @@ function! s:FindPort(dir, timer) abort
   let time = localtime()
   for name in readdir(a:dir)
     let path = a:dir . '/' . name
-    if time - getftime(path) <= 1 && getftype(path) == "file"
+    if time - getftime(path) <= 5 && getftype(path) == "file"
       call codeium#log#Info("Found port: " . name)
       let s:server_port = name
       call timer_stop(a:timer)
