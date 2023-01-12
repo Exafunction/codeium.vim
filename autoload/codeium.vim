@@ -11,6 +11,26 @@ if !has('nvim')
   endif
 endif
 
+let s:default_codeium_enabled = {
+      \ 'help': 0,
+      \ 'gitcommit': 0,
+      \ 'gitrebase': 0,
+      \ '.': 0}
+
+function! codeium#Enabled() abort
+  if !get(g:, 'codeium_enabled', v:true) || !get(b:, 'codeium_enabled', v:true)
+      return v:false
+  endif
+
+  let codeium_enabled_languages = s:default_codeium_enabled
+  call extend(codeium_enabled_languages, get(g:, 'codeium_enabled_languages', {}))
+  if !get(codeium_enabled_languages, &ft, 1)
+    return v:false
+  endif
+
+  return v:true
+endfunction
+
 function! codeium#CompletionText() abort
   try
     return remove(s:, 'completion_text')
@@ -240,6 +260,10 @@ function! codeium#Complete(...) abort
 
   if exists('g:_codeium_timer')
     call timer_stop(remove(g:, '_codeium_timer'))
+  endif
+
+  if !codeium#Enabled()
+    return
   endif
 
   let data = {

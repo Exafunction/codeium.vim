@@ -42,7 +42,9 @@ endfunction
 
 let s:api_key = get(s:LoadConfig(), 'apiKey', '')
 
-function! codeium#command#Auth() abort
+let s:commands = {}
+
+function! s:commands.Auth(...) abort
   if !codeium#util#HasSupportedVersion()
     if has('nvim')
       let min_version = 'NeoVim 0.6'
@@ -107,6 +109,41 @@ function! codeium#command#Auth() abort
   endif
 endfunction
 
+function! s:commands.Disable(...) abort
+  let g:codeium_enabled = 0
+endfunction
+
+function! s:commands.DisableBuffer(...) abort
+  let b:codeium_enabled = 0
+endfunction
+
+function! s:commands.Enable(...) abort
+  let g:codeium_enabled = 1
+endfunction
+
+function! s:commands.EnableBuffer(...) abort
+  let b:codeium_enabled = 1
+endfunction
+
 function! codeium#command#ApiKey() abort
   return s:api_key
+endfunction
+
+function! codeium#command#Complete(arg, lead, pos) abort
+  let args = matchstr(strpart(a:lead, 0, a:pos), 'C\%[odeium][! ] *\zs.*')
+  return sort(filter(keys(s:commands), { k -> strpart(k, 0, len(a:arg)) ==# a:arg }))
+endfunction
+
+function! codeium#command#Command(arg) abort
+  let cmd = matchstr(a:arg, '^\%(\\.\|\S\)\+')
+  let arg = matchstr(a:arg, '\s\zs\S.*')
+  if !has_key(s:commands, cmd)
+    return 'echoerr ' . string("Codeium: command '" . string(cmd) . "' not found")
+  endif
+  let res = s:commands[cmd](arg)
+  if type(res) == v:t_string
+    return res
+  else
+    return ''
+  endif
 endfunction

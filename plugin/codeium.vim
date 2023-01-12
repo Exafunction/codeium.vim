@@ -3,7 +3,7 @@ if exists("g:loaded_codeium")
 endif
 let g:loaded_codeium = 1
 
-command! CodeiumAuth exe codeium#command#Auth()
+command! -nargs=? -complete=customlist,codeium#command#Complete Codeium exe codeium#command#Command(<q-args>)
 
 if !codeium#util#HasSupportedVersion()
     finish
