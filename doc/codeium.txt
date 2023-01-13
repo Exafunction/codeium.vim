@@ -1,0 +1,81 @@
+*codeium.txt*  Codeium
+
+GETTING STARTED                                 *codeium*
+
+Run the `:Codeium Auth` command to login to Codeium. This is required to
+enable the plugin.
+
+Once logged in, suggested completions will be displayed inline as virtual
+text. You can insert a completion by pressing <Tab>.
+
+COMMANDS                                        *:Codeium*
+
+                                                *:Codeium_Auth*
+:Codeium Auth           Authenticate to Codeium.
+
+                                                *:Codeium_Disable*
+:Codeium Disable        Disable Codeium completions
+
+                                                *:Codeium_Enable*
+:Codeium Enable         Re-enable Codeium completions after running :Codeium Disable
+
+                                                *:Codeium_DisableBuffer*
+:Codeium DisableBuffer  Disable Codeium completions in the current buffer only.
+
+                                                *:Codeium_EnableBuffer*
+:Codeium EnableBuffer   Re-eisable Codeium completions in the current
+                        buffer after running :Codeium DisableBuffer
+
+
+OPTIONS                                         *codeium-options*
+
+                                                *g:codeium_filetypes*
+g:codeium_filetypes     A dictionary mapping whether codeium should be
+                        enabled or disabled in certain filetypes. This can
+                        be used to opt out of completions for certain filetypes.
+>
+                        let g:codeium_filetypes = {
+                              \ 'bash': v:false,
+                              \ 'typescript': v:true,
+                              \ }
+<
+
+                                                *g:codeium_filetypes*
+g:codeium_enabled       A global boolean flag that controls whether codeium
+                        completions are enabled or disabled by default.
+>
+                        let g:codeium_enabled = v:true
+<
+
+MAPS                                            *codeium-maps*
+
+                                                *codeium-i_<Tab>*
+Codeium.vim defaults to using the <Tab> key to insert the current
+suggestion. If there is no suggestion display, the <Tab> key will fallback
+to any existing <Tab> mapping you have.
+
+Other Maps ~
+
+                                                *codeium-i_CTRL-]*
+<C-]>                   Dismiss the current suggestion.
+<Plug>(codeium-dismiss)
+
+                                                *codeium-i_ALT-]*
+<M-]>                   Cycle to the next suggestion.
+<Plug>(codeium-next)
+
+                                                *codeium-i_ALT-[*
+<M-[>                   Cycle to the previous suggestion.
+<Plug>(codeium-previous)
+
+SYNTAX HIGHLIGHTING                             *codeium-highlighting*
+
+Inline suggestions are highlighted using the CodeiumSuggestion group,
+which defaults to a gray color. You can configure this highlight group for
+your colorscheme in after/colors/<colorschemename>.vim in your
+'runtimepath' (e.g., ~/.config/nvim/after/colors/solarized.vim).  Example
+declaration:
+>
+        highlight CodeiumSuggestion guifg=#555555 ctermfg=8
+<
+ vim:tw=78:et:ft=help:norl:

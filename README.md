@@ -8,8 +8,26 @@ least 0.6)
 2.  Install `Exafunction/codeium.vim` using your vim plugin manager of
 choice, or manually. See [Installation Options](#installation-options) below.
 
-3. Run `:CodeiumAuth` to set up the plugin and start using Codeium.
+3. Run `:Codeium Auth` to set up the plugin and start using Codeium.
 
+You can run `:help codeium` for a full list of commands and configuration
+options.
+
+## Configuration
+
+Codeium can be disabled for particular filetypes by setting the
+`g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
+
+```
+let g:codeium_filetypes = {
+    \ "bash": v:false,
+    \ "typescript": v:true,
+    \ }
+```
+
+Codeium is enabled by default for most filetypes.
+
+For a full list of configuration options you can run `:help codeium`.
 
 ## Installation Options
 

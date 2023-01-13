@@ -53,3 +53,8 @@ endif
 
 call s:SetStyle()
 call codeium#server#Start()
+
+let s:dir = expand('<sfile>:h:h')
+if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
+  silent! execute 'helptags' fnameescape(s:dir . '/doc')
+endif

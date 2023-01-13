@@ -1,6 +1,25 @@
-let s:codeium_version = '1.0.0'
-let s:ide = 'jetbrains'
-let s:ide_version = '1.0.0'
+let s:language_server_version = '1.1.14'
+
+if has('nvim')
+  let s:ide = 'neovim'
+else 
+  let s:ide = 'vim'
+endif
+
+if !exists('s:editor_version')
+  if has('nvim')
+    let s:ide_version = matchstr(execute('version'), 'NVIM v\zs[^[:space:]]\+')
+  else
+    let major = v:version / 100
+    let minor = v:version % 100
+    if exists('v:versionlong')
+      let patch = printf('%04d', v:versionlong % 1000)
+      let s:ide_version =  major . '.' . minor . '.' . patch
+    else
+      let s:ide_version =  major . '.' . minor
+    endif
+  endif
+endif
 
 let s:server_port = v:null
 let s:server_job = v:null
@@ -34,7 +53,7 @@ function! codeium#server#RequestMetadata() abort
         \ "api_key": codeium#command#ApiKey(),
         \ "ide_name":  s:ide,
         \ "ide_version":  s:ide_version,
-        \ "extension_version":  s:codeium_version,
+        \ "extension_version":  s:language_server_version,
         \ }
 endfunction
 
@@ -113,7 +132,7 @@ function! codeium#server#Start() abort
   endif
 
   if empty(glob(bin))
-    let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v1.1.14/language_server_' . bin_suffix . '.gz'
+    let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
     call system('curl -Lo ' . bin . '.gz' . ' ' . url)
     call system('gzip -d ' . bin . '.gz')
     call system('chmod +x ' . bin)

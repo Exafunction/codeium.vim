@@ -22,9 +22,9 @@ function! codeium#Enabled() abort
       return v:false
   endif
 
-  let codeium_enabled_languages = s:default_codeium_enabled
-  call extend(codeium_enabled_languages, get(g:, 'codeium_enabled_languages', {}))
-  if !get(codeium_enabled_languages, &ft, 1)
+  let codeium_filetypes = s:default_codeium_enabled
+  call extend(codeium_filetypes, get(g:, 'codeium_filetypes', {}))
+  if !get(codeium_filetypes, &ft, 1)
     return v:false
   endif
 
