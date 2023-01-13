@@ -18,7 +18,7 @@ options.
 Codeium can be disabled for particular filetypes by setting the
 `g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
 
-```
+```vimscript
 let g:codeium_filetypes = {
     \ "bash": v:false,
     \ "typescript": v:true,
@@ -26,6 +26,13 @@ let g:codeium_filetypes = {
 ```
 
 Codeium is enabled by default for most filetypes.
+
+You can also *disable* codeium by default with the `g:codeium_enabled`
+variable:
+
+```vimscript
+let g:codeium_enabled = v:false
+```
 
 For a full list of configuration options you can run `:help codeium`.
 
