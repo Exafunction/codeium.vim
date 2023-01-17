@@ -58,6 +58,7 @@ function! s:commands.Auth(...) abort
   let uuid = trim(s:Uuid())
   let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=show-auth-token&state=' . uuid . '&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()
+  let opened_browser = v:false
   if !empty(browser)
     echo "Press ENTER to login to Codeium in your browser."
 
@@ -66,46 +67,55 @@ function! s:commands.Auth(...) abort
       let c = getchar()
     endwhile
 
+    echo "Navigating to " . url
     try
       call system(browser . ' ' . "'" . url . "'")
+      if v:shell_error is# 0
+        let opened_browser = v:true
+      endif
     catch
-      echo "Failed to open browser. Open " . url
     endtry
 
-    let api_key = ''
-    let auth_token = input('Paste your token here: ')
-    let tries = 0
-
-    while empty(api_key) && tries < 3
-      let command = 'curl -s https://api.codeium.com/register_user/ ' .
-            \ '--header "Content-Type: application/json" ' .
-            \ '--data ' . "'" . json_encode({'firebase_id_token': auth_token}) . "'"
-      let response = system(command)
-      let res = json_decode(response)
-      let api_key = get(res, 'api_key', '')
-      if empty(api_key)
-        let auth_token = input('Invalid token, please try again: ')
-      endif
-      let tries = tries + 1
-    endwhile
-
-    if !empty(api_key)
-      let s:api_key = api_key
-      let config_dir = s:ConfigDir()
-      let config_path = config_dir . '/config.json'
-      let config = s:LoadConfig()
-      let config.apiKey = api_key
-
-      try
-        if !filereadable(config_path)
-          call mkdir(config_dir, "p")
-        endif
-
-        call writefile([json_encode(config)], config_path)
-      catch
-        call codeium#log#Error("Could not persist api key to config.json")
-      endtry
+    if !opened_browser
+      echo "Failed to open browser. Please go to the link above."
     endif
+  else
+    echo "No available browser found. Please go to " . url
+  endif
+
+  let api_key = ''
+  let auth_token = input('Paste your token here: ')
+  let tries = 0
+
+  while empty(api_key) && tries < 3
+    let command = 'curl -s https://api.codeium.com/register_user/ ' .
+          \ '--header "Content-Type: application/json" ' .
+          \ '--data ' . "'" . json_encode({'firebase_id_token': auth_token}) . "'"
+    let response = system(command)
+    let res = json_decode(response)
+    let api_key = get(res, 'api_key', '')
+    if empty(api_key)
+      let auth_token = input('Invalid token, please try again: ')
+    endif
+    let tries = tries + 1
+  endwhile
+
+  if !empty(api_key)
+    let s:api_key = api_key
+    let config_dir = s:ConfigDir()
+    let config_path = config_dir . '/config.json'
+    let config = s:LoadConfig()
+    let config.apiKey = api_key
+
+    try
+      if !filereadable(config_path)
+        call mkdir(config_dir, "p")
+      endif
+
+      call writefile([json_encode(config)], config_path)
+    catch
+      call codeium#log#Error("Could not persist api key to config.json")
+    endtry
   endif
 endfunction
 
