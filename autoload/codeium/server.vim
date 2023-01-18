@@ -123,7 +123,7 @@ function! codeium#server#Start() abort
     let bin_suffix = "windows_x64.exe"
   endif
 
-  let s:root = expand('<sfile>:h:h')
+  let s:root = expand('<script>:p:h:h:h')
   let bin_dir = s:root . "/bin"
   let bin = bin_dir . "/language_server_" . bin_suffix
 
