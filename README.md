@@ -4,6 +4,7 @@
 
 ---
 
+[![Try in browser](https://img.shields.io/badge/Try%20in%20browser-.py%2F.js-brightgreen)](https://www.codeium.com/playground)
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
 [![Twitter Follow](https://img.shields.io/twitter/follow/codeiumdev)](https://twitter.com/intent/follow?screen_name=codeiumdev)
 
