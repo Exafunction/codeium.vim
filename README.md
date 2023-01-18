@@ -20,7 +20,7 @@
    least 0.6)
 
 2. Install `Exafunction/codeium.vim` using your vim plugin manager of
-   choice, or manually. See [Installation Options](#installation-options) below.
+   choice, or manually. See [Installation Options](#-installation-options) below.
 
 3. Run `:Codeium Auth` to set up the plugin and start using Codeium.
 
