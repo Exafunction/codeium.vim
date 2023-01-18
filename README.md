@@ -14,7 +14,7 @@
 
 # codeium.vim
 
-## Getting started
+## 🚀 Getting started
 
 1. Install [Vim](https://github.com/vim/vim) (at least 9.0.0185) or [Neovim](https://github.com/neovim/neovim/releases/latest) (at
    least 0.6)
@@ -27,12 +27,12 @@
 You can run `:help codeium` for a full list of commands and configuration
 options.
 
-## Configuration
+## 🛠️ Configuration
 
 Codeium can be disabled for particular filetypes by setting the
 `g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
 
-```vimscript
+```vim
 let g:codeium_filetypes = {
     \ "bash": v:false,
     \ "typescript": v:true,
@@ -44,48 +44,48 @@ Codeium is enabled by default for most filetypes.
 You can also _disable_ codeium by default with the `g:codeium_enabled`
 variable:
 
-```vimscript
+```vim
 let g:codeium_enabled = v:false
 ```
 
 For a full list of configuration options you can run `:help codeium`.
 
-## Installation Options
+## 💾 Installation Options
 
-### vim-plug
+### 🔌 vim-plug
 
-```
+```vim
 Plug 'Exafunction/codeium.vim'
 ```
 
-### Vundle
+### 📦 Vundle
 
-```
+```vim
 Plugin 'Exafunction/codeium.vim'
 ```
 
-### packer.nvim:
+### 📦 packer.nvim:
 
-```
+```vim
 use 'Exafunction/codeium.vim'
 ```
 
-### Manual
+### 💪 Manual
 
-#### Vim
+#### 🖥️ Vim
 
 Run the following. On windows, you can replace `~/.vim` with
 `$HOME/vimfiles`:
 
-```
+```bash
 git clone https://github.com/Exafunction/codeium.vim ~/.vim/pack/Exafunction/start/codeium.vim
 ```
 
-#### Neovim
+#### 💻 Neovim
 
 Run the following. On windows, you can replace `~/.config` with
 `$HOME/AppData/Local`:
 
-```
+```bash
 git clone https://github.com/Exafunction/codeium.vim ~/.config/nvim/pack/Exafunction/start/codeium.vim
 ```
