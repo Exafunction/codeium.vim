@@ -1,4 +1,6 @@
-# Codeium.vim
+<p align="center">
+  <img width="300" alt="Codeium" src="codeium.svg"/>
+</p>
 
 ## Getting started
 
