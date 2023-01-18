@@ -4,7 +4,7 @@
 
 ---
 
-[![Discord](https://img.shields.io/discord/1027685395649015980?color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
+[![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
 [![Twitter Follow](https://img.shields.io/twitter/follow/codeiumdev)](https://twitter.com/intent/follow?screen_name=codeiumdev)
 
 [![Visual Studio](https://img.shields.io/visual-studio-marketplace/d/Codeium.codeium?label=Visual%20Studio&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=Codeium.codeium)
