@@ -4,9 +4,9 @@
 
 ---
 
-[![Try in browser](https://img.shields.io/badge/Try%20in%20browser-.py%2F.js-brightgreen)](https://www.codeium.com/playground)
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
 [![Twitter Follow](https://img.shields.io/twitter/follow/codeiumdev)](https://twitter.com/intent/follow?screen_name=codeiumdev)
+![License](https://img.shields.io/github/license/Exafunction/codeium.vim)
 
 [![Visual Studio](https://img.shields.io/visual-studio-marketplace/d/Codeium.codeium?label=Visual%20Studio&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=Codeium.codeium)
 [![JetBrains](https://img.shields.io/jetbrains/plugin/d/20540?label=JetBrains)](https://plugins.jetbrains.com/plugin/20540-codeium/)
@@ -14,6 +14,12 @@
 [![Google Chrome](https://img.shields.io/chrome-web-store/users/hobjkcpmjhlegmobgonaagepfckjkceh?label=Google%20Chrome&logo=googlechrome&logoColor=FFFFFF)](https://chrome.google.com/webstore/detail/codeium/hobjkcpmjhlegmobgonaagepfckjkceh)
 
 # codeium.vim
+
+_Free, ultrafast Copilot alternative for Vim and Neovim_
+
+Codeium autocompletes your code with AI in all major IDEs. This repository contains the implementation of the Codeium plugin for Vim and Neovim. Check out our [playground](https://www.codeium.com/playground) if you want to quickly try out Codeium online.
+
+Contributions are welcome! Feel free to submit pull requests and issues related to the plugin.
 
 ## 🚀 Getting started
 
