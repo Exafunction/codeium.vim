@@ -56,7 +56,7 @@ function! s:commands.Auth(...) abort
   endif
 
   let uuid = trim(s:Uuid())
-  let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=show-auth-token&state=' . uuid . '&scope=openid%20profile%20email&redirect_parameters_type=query'
+  let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=vim-show-auth-token&state=' . uuid . '&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
