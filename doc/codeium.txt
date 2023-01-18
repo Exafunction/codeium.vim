@@ -40,7 +40,7 @@ g:codeium_filetypes     A dictionary mapping whether codeium should be
                               \ }
 <
 
-                                                *g:codeium_filetypes*
+                                                *g:codeium_enabled*
 g:codeium_enabled       A global boolean flag that controls whether codeium
                         completions are enabled or disabled by default.
 >
