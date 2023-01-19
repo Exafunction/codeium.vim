@@ -42,6 +42,8 @@ options.
 
 ## 🛠️ Configuration
 
+### 🖥️ For Vim users
+
 Codeium can be disabled for particular filetypes by setting the
 `g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
 
@@ -62,6 +64,34 @@ let g:codeium_enabled = v:false
 ```
 
 For a full list of configuration options you can run `:help codeium`.
+
+### 💻 For Neovim users
+
+You can use the following Lua code to invoke the Vimscript function for autocompletion by this plugin:
+
+```lua
+vim.fn["codeium#Accept"]()
+```
+
+Since this function returns an **expression**, we need to specify it explicitly using `{ expr = true }`.
+Here is a working example for both [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
+and [folke/lazy.nvim](https://github.com/folke/lazy.nvim): 
+
+```lua
+-- Remove the `use` here if you're using folke/lazy.nvim.
+use {
+  'Exafunction/codeium.vim',
+  config = function ()
+    -- Change '<C-g>' here to any keycode you like.
+    vim.keymap.set('i', '<C-g>', function ()
+      return vim.fn['codeium#Accept']()
+    end, { expr = true })
+  end
+}
+```
+
+(Make sure that you ran `:Codeium Auth` after installation.)
+
 
 ## 💾 Installation Options
 
