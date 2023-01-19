@@ -73,7 +73,9 @@ You can use the following syntax to access the function that will trigger this p
 vim.fn["codeium#Accept"]()
 ```
 
-and here is an example setup with [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins):
+and here is an example setup that will works with both
+[wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
+and [folke/lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 use {
@@ -83,6 +85,8 @@ use {
   end
 }
 ```
+
+(Make sure that you did run `:Codeium Auth` after your installation.)
 
 
 ## 💾 Installation Options
