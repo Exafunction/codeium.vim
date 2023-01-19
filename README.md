@@ -73,7 +73,7 @@ You can use the following Lua syntax to access the function that will trigger th
 vim.fn["codeium#Accept"]()
 ```
 
-and here is an example setup that will works with both
+and here is an example setup that works with both
 [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
 and [folke/lazy.nvim](https://github.com/folke/lazy.nvim): 
 (you will need to remove the `use` for the latter)
