@@ -23,7 +23,7 @@ COMMANDS                                        *:Codeium*
 :Codeium DisableBuffer  Disable Codeium completions in the current buffer only.
 
                                                 *:Codeium_EnableBuffer*
-:Codeium EnableBuffer   Re-enable Codeium completions in the current
+:Codeium EnableBuffer   Re-eisable Codeium completions in the current
                         buffer after running :Codeium DisableBuffer
 
 
@@ -45,13 +45,6 @@ g:codeium_enabled       A global boolean flag that controls whether codeium
                         completions are enabled or disabled by default.
 >
                         let g:codeium_enabled = v:true
-<
-
-                                                *g:codeium_manual*
-g:codeium_manual        If true, codeium completions will never automatically
-                        trigger.
->
-                        let g:codeium_manual = v:true
 <
 
                                                 *g:codeium_no_map_tab*
@@ -86,24 +79,21 @@ MAPS                                            *codeium-maps*
                                                 *codeium-i_<Tab>*
 Codeium.vim defaults to using the <Tab> key to insert the current
 suggestion. If there is no suggestion display, the <Tab> key will fallback
-to any existing <Tab> mapping you have. This is bound to `codeium#Accept()`
+to any existing <Tab> mapping you have.
 
 Other Maps ~
 
                                                 *codeium-i_CTRL-]*
 <C-]>                   Dismiss the current suggestion.
 <Plug>(codeium-dismiss)
-<Cmd>call codeium#Clear()<CR>
 
                                                 *codeium-i_ALT-]*
 <M-]>                   Cycle to the next suggestion.
 <Plug>(codeium-next)
-<Cmd>call codeium#CycleCompletions(1)<CR>
 
                                                 *codeium-i_ALT-[*
 <M-[>                   Cycle to the previous suggestion.
 <Plug>(codeium-previous)
-<Cmd>call codeium#CycleCompletions(-1)<CR>
 
 SYNTAX HIGHLIGHTING                             *codeium-highlighting*
 
