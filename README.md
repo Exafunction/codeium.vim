@@ -74,7 +74,7 @@ vim.fn["codeium#Accept"]()
 ```
 
 Since this function returns an **expression**, we need to specify it explicitly using `{ expr = true }`.
-Here is an working example for both [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
+Here is a working example for both [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
 and [folke/lazy.nvim](https://github.com/folke/lazy.nvim): 
 
 ```lua
