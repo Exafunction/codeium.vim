@@ -78,7 +78,7 @@ Here is a working example for both [wbthomason/packer.nvim](https://github.com/w
 and [folke/lazy.nvim](https://github.com/folke/lazy.nvim): 
 
 ```lua
--- Remove the use here if you're using folke/lazy.nvim.
+-- Remove the `use` here if you're using folke/lazy.nvim.
 use {
   'Exafunction/codeium.vim',
   config = function ()
