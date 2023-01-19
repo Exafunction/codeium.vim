@@ -67,7 +67,7 @@ For a full list of configuration options you can run `:help codeium`.
 
 ### 💻 For Neovim users
 
-You can use the following Lua syntax to access the Vim Script function for auto-completion by this plugin:
+You can use the following Lua code to invoke the Vimscript function for autocompletion by this plugin:
 
 ```lua
 vim.fn["codeium#Accept"]()
@@ -82,7 +82,7 @@ and [folke/lazy.nvim](https://github.com/folke/lazy.nvim):
 use {
   'Exafunction/codeium.vim',
   config = function ()
-    -- Change '<C-g>' here to any keymap you like.
+    -- Change '<C-g>' here to any keycode you like.
     vim.keymap.set('i', '<C-g>', function ()
       return vim.fn['codeium#Accept']()
     end, { expr = true })
