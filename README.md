@@ -67,7 +67,7 @@ For a full list of configuration options you can run `:help codeium`.
 
 ### For NeoVim Users
 
-You can use the following syntax to access the function that will trigger this plugin:
+You can use the following Lua syntax to access the function that will trigger this plugin:
 
 ```lua
 vim.fn["codeium#Accept"]()
