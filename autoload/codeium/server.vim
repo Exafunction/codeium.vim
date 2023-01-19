@@ -127,7 +127,7 @@ function! codeium#server#Start() abort
   let bin = bin_dir . "/language_server_" . bin_suffix
 
   if !isdirectory(bin_dir)
-    call mkdir(bin_dir)
+    call mkdir(bin_dir, "p")
   endif
 
   if empty(glob(bin))
