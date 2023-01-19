@@ -17,7 +17,7 @@
 
 _Free, ultrafast Copilot alternative for Vim and Neovim_
 
-Codeium autocompletes your code with AI in all major IDEs. This repository contains the implementation of the Codeium plugin for Vim and Neovim. Check out our [playground](https://www.codeium.com/playground) if you want to quickly try out Codeium online.
+Codeium autocompletes your code with AI in all major IDEs. We [launched](https://www.codeium.com/blog/codeium-copilot-alternative-in-vim) this implementation of the Codeium plugin for Vim and Neovim to bring this modern coding superpower to more developers. Check out our [playground](https://www.codeium.com/playground) if you want to quickly try out Codeium online.
 
 Contributions are welcome! Feel free to submit pull requests and issues related to the plugin.
 
@@ -38,7 +38,7 @@ Contributions are welcome! Feel free to submit pull requests and issues related 
 3. Run `:Codeium Auth` to set up the plugin and start using Codeium.
 
 You can run `:help codeium` for a full list of commands and configuration
-options.
+options, or see [this guide](https://www.codeium.com/vim_tutorial) for a quick tutorial on how to use Codeium.
 
 ## 🛠️ Configuration
 
