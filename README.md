@@ -42,7 +42,7 @@ options.
 
 ## 🛠️ Configuration
 
-### For Vim Users
+### 🖥️ For Vim users
 
 Codeium can be disabled for particular filetypes by setting the
 `g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
@@ -65,9 +65,9 @@ let g:codeium_enabled = v:false
 
 For a full list of configuration options you can run `:help codeium`.
 
-### For NeoVim Users
+### 💻 For Neovim users
 
-You can use the following Lua syntax to access the function that will trigger this plugin:
+You can use the following Lua code to trigger this plugin:
 
 ```lua
 vim.fn["codeium#Accept"]()
@@ -87,7 +87,7 @@ use {
 }
 ```
 
-(Make sure that you did run `:Codeium Auth` after your installation.)
+(Make sure that you ran `:Codeium Auth` after installation.)
 
 
 ## 💾 Installation Options
