@@ -75,8 +75,8 @@ vim.fn["codeium#Accept"]()
 
 and here is an example setup that works with both
 [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
-and [folke/lazy.nvim](https://github.com/folke/lazy.nvim): 
-(you will need to remove the `use` for the latter)
+and [folke/lazy.nvim](https://github.com/folke/lazy.nvim) 
+(you will need to remove the `use` for the latter):
 
 ```lua
 use {
