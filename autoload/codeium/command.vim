@@ -28,6 +28,10 @@ function! s:ConfigDir() abort
   return config_dir . '/codeium'
 endfunction
 
+function! codeium#command#ConfigDir() abort
+  return s:ConfigDir()
+endfunction
+
 function! s:LoadConfig() abort
   let config_path = s:ConfigDir() . '/config.json'
   if filereadable(config_path)
