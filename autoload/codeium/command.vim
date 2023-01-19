@@ -21,11 +21,7 @@ function! s:Uuid() abort
 endfunction
 
 function! s:ConfigDir() abort
-  let config_dir = $XDG_CONFIG_HOME
-  if empty(config_dir)
-    let config_dir = $HOME . '/.config'
-  endif
-  return config_dir . '/codeium'
+  return $HOME . '/.codeium'
 endfunction
 
 function! s:LoadConfig() abort

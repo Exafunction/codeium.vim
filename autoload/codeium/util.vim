@@ -15,7 +15,7 @@ function! codeium#util#LineEndingChars(...) abort
   endif
 endfunction
 
-function codeium#util#UTF8Width(str) abort
+function! codeium#util#UTF8Width(str) abort
   return strchars(substitute(a:str, "\\%#=2[^\u0001-\uffff]", "    ", 'g'))
 endfunction
 
