@@ -1,12 +1,12 @@
 let s:line_endings = {
-      \ "unix": "\n",
-      \ "dos": "\r\n",
-      \ "mac": "\r",
+      \ 'unix': "\n",
+      \ 'dos': "\r\n",
+      \ 'mac': "\r",
       \ }
 
 function! codeium#util#LineEndingChars(...) abort
-  if has_key(s:line_endings, &ff)
-    return get(s:line_endings, &ff)
+  if has_key(s:line_endings, &fileformat)
+    return get(s:line_endings, &fileformat)
   endif
   if a:0 && !empty(a:1)
     return a:1
@@ -16,7 +16,7 @@ function! codeium#util#LineEndingChars(...) abort
 endfunction
 
 function! codeium#util#UTF8Width(str) abort
-  return strchars(substitute(a:str, "\\%#=2[^\u0001-\uffff]", "    ", 'g'))
+  return strchars(substitute(a:str, "\\%#=2[^\u0001-\uffff]", '    ', 'g'))
 endfunction
 
 function! codeium#util#PositionToOffset(row, col) abort

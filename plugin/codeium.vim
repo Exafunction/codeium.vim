@@ -1,4 +1,4 @@
-if exists("g:loaded_codeium")
+if exists('g:loaded_codeium')
   finish
 endif
 let g:loaded_codeium = 1

@@ -24,7 +24,7 @@ function! codeium#Enabled() abort
 
   let codeium_filetypes = s:default_codeium_enabled
   call extend(codeium_filetypes, get(g:, 'codeium_filetypes', {}))
-  if !get(codeium_filetypes, &ft, 1)
+  if !get(codeium_filetypes, &filetype, 1)
     return v:false
   endif
 
@@ -63,20 +63,20 @@ function! codeium#Accept() abort
     let s:completion_text = text
 
     let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
-    let move_to_start = "\<C-O>:call cursor(" . start_row . "," . start_col . ")\<CR>"
-    let move_to_end = "\<C-O>:call cursor(" . end_row . "," . end_col . ")\<CR>"
+    let move_to_start = "\<C-O>:call cursor(" . start_row . ',' . start_col . ")\<CR>"
+    let move_to_end = "\<C-O>:call cursor(" . end_row . ',' . end_col . ")\<CR>"
 
     let delete_text = move_to_start
     if start_row == end_row
       if end_col > start_col
-        let delete_text = move_to_start . "\<C-O>d" . (end_col - start_col) . "l"
+        let delete_text = move_to_start . "\<C-O>d" . (end_col - start_col) . 'l'
       endif 
     else 
       " Delete last line, then intermediate lines.
       let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
     endif
 
-    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), "completion_id": current_completion.completion.completionId})
+    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
     return delete_text . insert_text
   endif
 
@@ -95,7 +95,7 @@ function! s:HandleCompletionsResult(out, status) abort
 
       call s:RenderCurrentCompletion()
     catch
-      call codeium#log#Error("Invalid response from language server")
+      call codeium#log#Error('Invalid response from language server')
       call codeium#log#Exception()
     endtry
   endif
@@ -141,7 +141,7 @@ function! s:RenderCurrentCompletion() abort
   let start_offset = get(current_completion.range, 'startOffset', 0)
   let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
   if start_row != line('.')
-    call codeium#log#Info("Ignoring completion, line number is not the current line.")
+    call codeium#log#Info('Ignoring completion, line number is not the current line.')
     return ''
   endif
 
@@ -152,7 +152,7 @@ function! s:RenderCurrentCompletion() abort
     let [row, col] = codeium#util#OffsetToPosition(part.offset)
     let text = part.text
 
-    if part.type == 'COMPLETION_PART_TYPE_INLINE' && idx == 0
+    if part.type ==# 'COMPLETION_PART_TYPE_INLINE' && idx == 0
       " For first inline completion, strip any characters the user has typed
       " that match the start of the completion.
       let cursor_col = col('.')
@@ -167,9 +167,9 @@ function! s:RenderCurrentCompletion() abort
 
     if has('nvim')
       let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': virtcol('.') - 1}
-      if part.type == 'COMPLETION_PART_TYPE_INLINE'
+      if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
         let data.virt_text = [[text, s:hlgroup]]
-      elseif part.type == 'COMPLETION_PART_TYPE_BLOCK'
+      elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
         let lines = split(text, "\n", 1)
         if empty(lines[-1])
           call remove(lines, -1)
@@ -182,9 +182,9 @@ function! s:RenderCurrentCompletion() abort
       call add(s:nvim_extmark_ids, data.id)
       call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, col - 1, data)
     else
-      if part.type == 'COMPLETION_PART_TYPE_INLINE'
+      if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
         call prop_add(row, col, {'type': s:hlgroup, 'text': text})
-      elseif part.type == 'COMPLETION_PART_TYPE_BLOCK'
+      elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
         let text = split(part.text, "\n", 1)
         if empty(text[-1])
           call remove(text, -1)
@@ -267,19 +267,19 @@ function! codeium#Complete(...) abort
   endif
 
   let data = {
-        \ "metadata": codeium#server#RequestMetadata(),
-        \ "document": codeium#doc#GetCurrentDocument(),
-        \ "editor_options": codeium#doc#GetEditorOptions(),
-        \ "api_server_params": {
-        \   "api_timeout_ms": 5000,
-        \   "first_temperature":0.2,
-        \   "max_completions": 10,
-        \   "max_newlines":20,
-        \   "max_tokens":256,
-        \   "min_log_probability":-15.0,
-        \   "temperature":0.2,
-        \   "top_k":50,
-        \   "top_p":1.0
+        \ 'metadata': codeium#server#RequestMetadata(),
+        \ 'document': codeium#doc#GetCurrentDocument(),
+        \ 'editor_options': codeium#doc#GetEditorOptions(),
+        \ 'api_server_params': {
+        \   'api_timeout_ms': 5000,
+        \   'first_temperature':0.2,
+        \   'max_completions': 10,
+        \   'max_newlines':20,
+        \   'max_tokens':256,
+        \   'min_log_probability':-15.0,
+        \   'temperature':0.2,
+        \   'top_k':50,
+        \   'top_p':1.0
         \ }
         \ }
     
@@ -298,9 +298,9 @@ function! codeium#Complete(...) abort
     let request_job = codeium#server#Request('GetCompletions', data, function('s:HandleCompletionsResult', []))
 
     let b:_codeium_completions = {
-          \ "request_data": request_data,
-          \ "request_id": request_id,
-          \ "job": request_job
+          \ 'request_data': request_data,
+          \ 'request_id': request_id,
+          \ 'job': request_job
           \ }
   catch
     call codeium#log#Exception()
