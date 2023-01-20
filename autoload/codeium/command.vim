@@ -17,7 +17,7 @@ function! s:Uuid() abort
     return system('uuidgen')
   endif
 
-  throw "Could not generate uuid. Please make sure uuidgen is installed."
+  throw 'Could not generate uuid. Please make sure uuidgen is installed.'
 endfunction
 
 function! s:ConfigDir() abort
@@ -51,7 +51,7 @@ function! s:commands.Auth(...) abort
     else
       let min_version = 'Vim 9.0.0185'
     endif
-    echo "This version of Vim is unsupported. Install " . min_version . " or greater to use Codeium."
+    echo 'This version of Vim is unsupported. Install ' . min_version . ' or greater to use Codeium.'
     return
   endif
 
@@ -60,14 +60,14 @@ function! s:commands.Auth(...) abort
   let browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
-    echo "Press ENTER to login to Codeium in your browser."
+    echo 'Press ENTER to login to Codeium in your browser.'
 
     let c = getchar()
     while c isnot# 13 && c isnot# 10 && c isnot# 0
       let c = getchar()
     endwhile
 
-    echo "Navigating to " . url
+    echo 'Navigating to ' . url
     try
       call system(browser . ' ' . "'" . url . "'")
       if v:shell_error is# 0
@@ -77,10 +77,10 @@ function! s:commands.Auth(...) abort
     endtry
 
     if !opened_browser
-      echo "Failed to open browser. Please go to the link above."
+      echo 'Failed to open browser. Please go to the link above.'
     endif
   else
-    echo "No available browser found. Please go to " . url
+    echo 'No available browser found. Please go to ' . url
   endif
 
   let api_key = ''
@@ -109,12 +109,12 @@ function! s:commands.Auth(...) abort
 
     try
       if !filereadable(config_path)
-        call mkdir(config_dir, "p")
+        call mkdir(config_dir, 'p')
       endif
 
       call writefile([json_encode(config)], config_path)
     catch
-      call codeium#log#Error("Could not persist api key to config.json")
+      call codeium#log#Error('Could not persist api key to config.json')
     endtry
   endif
 endfunction

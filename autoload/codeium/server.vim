@@ -50,16 +50,16 @@ endfunction
 
 function! codeium#server#RequestMetadata() abort
   return {
-        \ "api_key": codeium#command#ApiKey(),
-        \ "ide_name":  s:ide,
-        \ "ide_version":  s:ide_version,
-        \ "extension_version":  s:language_server_version,
+        \ 'api_key': codeium#command#ApiKey(),
+        \ 'ide_name':  s:ide,
+        \ 'ide_version':  s:ide_version,
+        \ 'extension_version':  s:language_server_version,
         \ }
 endfunction
 
 function! codeium#server#Request(type, data, ...) abort
   if s:server_port is# v:null
-    throw "Server port has not been properly initialized."
+    throw 'Server port has not been properly initialized.'
   endif
   let uri = 'http://localhost:' . s:server_port . 
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
@@ -68,7 +68,7 @@ function! codeium#server#Request(type, data, ...) abort
               \ '--header', 'Content-Type: application/json',
               \ '--data', json_encode(a:data)
               \ ]
-  let result = {"out": []}
+  let result = {'out': []}
   let ExitCallback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
   if has('nvim')
     return jobstart(args, {
@@ -89,8 +89,8 @@ function! s:FindPort(dir, timer) abort
   let time = localtime()
   for name in readdir(a:dir)
     let path = a:dir . '/' . name
-    if time - getftime(path) <= 5 && getftype(path) == "file"
-      call codeium#log#Info("Found port: " . name)
+    if time - getftime(path) <= 5 && getftype(path) ==# 'file'
+      call codeium#log#Info('Found port: ' . name)
       let s:server_port = name
       call timer_stop(a:timer)
       break
@@ -109,25 +109,25 @@ endfunction
 function! codeium#server#Start() abort
   let os = substitute(system('uname'), '\n', '', '')
   let arch = substitute(system('uname -m'), '\n', '', '')
-  let is_arm = stridx(arch, "arm") == 0 || stridx(arch, "aarch64") == 0
+  let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
-  if os == 'Linux' && is_arm
-    let bin_suffix = "linux_arm"
-  elseif os == 'Linux'
-    let bin_suffix = "linux_x64"
-  elseif os == 'Darwin' && is_arm
-    let bin_suffix = "macos_arm"
-  elseif os == 'Darwin'
-    let bin_suffix = "macos_x64"
+  if os ==# 'Linux' && is_arm
+    let bin_suffix = 'linux_arm'
+  elseif os ==# 'Linux'
+    let bin_suffix = 'linux_x64'
+  elseif os ==# 'Darwin' && is_arm
+    let bin_suffix = 'macos_arm'
+  elseif os ==# 'Darwin'
+    let bin_suffix = 'macos_x64'
   else
-    let bin_suffix = "windows_x64.exe"
+    let bin_suffix = 'windows_x64.exe'
   endif
 
-  let bin_dir = codeium#command#ConfigDir() . "/bin"
-  let bin = bin_dir . "/language_server_" . bin_suffix
+  let bin_dir = codeium#command#ConfigDir() . '/bin'
+  let bin = bin_dir . '/language_server_' . bin_suffix
 
   if !isdirectory(bin_dir)
-    call mkdir(bin_dir, "p")
+    call mkdir(bin_dir, 'p')
   endif
 
   if empty(glob(bin))
@@ -136,23 +136,23 @@ function! codeium#server#Start() abort
     call system('gzip -d ' . bin . '.gz')
     call system('chmod +x ' . bin)
     if empty(glob(bin))
-      call codeium#log#Error("Failed to download language server binary.")
+      call codeium#log#Error('Failed to download language server binary.')
       return ''
     endif
   endif
 
-  let config = get(g:, "codeium_server_config", {})
+  let config = get(g:, 'codeium_server_config', {})
   let manager_dir = tempname() . '/codeium/manager'
-  call mkdir(manager_dir, "p")
+  call mkdir(manager_dir, 'p')
 
   let args = [
         \ bin,
-        \ "--api_server_host", get(config, "api_host", "server.codeium.com"),
-        \ "--api_server_port", get(config, "api_port", "443"),
-        \ "--manager_dir", manager_dir
+        \ '--api_server_host', get(config, 'api_host', 'server.codeium.com'),
+        \ '--api_server_port', get(config, 'api_port', '443'),
+        \ '--manager_dir', manager_dir
         \ ]
 
-  call codeium#log#Info("Launching server with manager_dir " . manager_dir)
+  call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
     let s:server_job = jobstart(args, {
                 \ 'on_stderr': { channel, data, t -> codeium#log#Info("[SERVER] " . join(data, "\n")) },
