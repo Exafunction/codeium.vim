@@ -1,4 +1,5 @@
-let s:language_server_version = '1.1.14'
+let s:language_server_version = '1.1.20'
+let s:language_server_sha = 'e48c096cbf00e6b75f101c7b4a108416f1a1f0dd'
 
 if has('nvim')
   let s:ide = 'neovim'
@@ -123,12 +124,9 @@ function! codeium#server#Start() abort
     let bin_suffix = 'windows_x64.exe'
   endif
 
-  let bin_dir = codeium#command#ConfigDir() . '/bin'
+  let bin_dir = codeium#command#ConfigDir() . '/bin/' . s:language_server_sha
   let bin = bin_dir . '/language_server_' . bin_suffix
-
-  if !isdirectory(bin_dir)
-    call mkdir(bin_dir, 'p')
-  endif
+  call mkdir(bin_dir, 'p')
 
   if empty(glob(bin))
     let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
