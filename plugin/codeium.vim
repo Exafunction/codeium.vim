@@ -40,7 +40,7 @@ if empty(mapcheck('<C-]>', 'i'))
 endif
 imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
 imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
-imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete<CR>
+imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
 if empty(mapcheck('<M-]>', 'i'))
   imap <M-]> <Plug>(codeium-next)
 endif
