@@ -269,18 +269,7 @@ function! codeium#Complete(...) abort
   let data = {
         \ 'metadata': codeium#server#RequestMetadata(),
         \ 'document': codeium#doc#GetCurrentDocument(),
-        \ 'editor_options': codeium#doc#GetEditorOptions(),
-        \ 'api_server_params': {
-        \   'api_timeout_ms': 5000,
-        \   'first_temperature':0.2,
-        \   'max_completions': 10,
-        \   'max_newlines':20,
-        \   'max_tokens':256,
-        \   'min_log_probability':-15.0,
-        \   'temperature':0.2,
-        \   'top_k':50,
-        \   'top_p':1.0
-        \ }
+        \ 'editor_options': codeium#doc#GetEditorOptions()
         \ }
     
   if exists('b:_codeium_completions.request_data') && b:_codeium_completions.request_data ==# data
