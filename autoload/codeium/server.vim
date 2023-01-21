@@ -1,5 +1,5 @@
-let s:language_server_version = '1.1.20'
-let s:language_server_sha = 'e48c096cbf00e6b75f101c7b4a108416f1a1f0dd'
+let s:language_server_version = '1.1.22'
+let s:language_server_sha = '0a0cf69c54bd02be577e1240463b85d782fa5475'
 
 if has('nvim')
   let s:ide = 'neovim'
