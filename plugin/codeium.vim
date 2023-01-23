@@ -54,7 +54,7 @@ if empty(mapcheck('<M-Bslash>', 'i'))
 endif
 
 call s:SetStyle()
-call codeium#server#Start()
+call timer_start(0, function('codeium#server#Start'))
 
 let s:dir = expand('<sfile>:h:h')
 if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
