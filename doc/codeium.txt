@@ -59,21 +59,24 @@ MAPS                                            *codeium-maps*
                                                 *codeium-i_<Tab>*
 Codeium.vim defaults to using the <Tab> key to insert the current
 suggestion. If there is no suggestion display, the <Tab> key will fallback
-to any existing <Tab> mapping you have.
+to any existing <Tab> mapping you have. This is bound to `codeium#Accept()`
 
 Other Maps ~
 
                                                 *codeium-i_CTRL-]*
 <C-]>                   Dismiss the current suggestion.
 <Plug>(codeium-dismiss)
+<Cmd>call codeium#Clear()<CR>
 
                                                 *codeium-i_ALT-]*
 <M-]>                   Cycle to the next suggestion.
 <Plug>(codeium-next)
+<Cmd>call codeium#CycleCompletions(1)<CR>
 
                                                 *codeium-i_ALT-[*
 <M-[>                   Cycle to the previous suggestion.
 <Plug>(codeium-previous)
+<Cmd>call codeium#CycleCompletions(-1)<CR>
 
 SYNTAX HIGHLIGHTING                             *codeium-highlighting*
 
