@@ -45,7 +45,7 @@ options, or see [this guide](https://www.codeium.com/vim_tutorial) for a quick t
 For a full list of configuration options you can run `:help codeium`.
 A few of the most popular options are highlighted below.
 
-### ⌨️  Keybindings
+### ⌨️ Keybindings
 
 Codeium provides the following functions to control suggestions:
 
