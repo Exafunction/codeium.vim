@@ -42,7 +42,66 @@ options, or see [this guide](https://www.codeium.com/vim_tutorial) for a quick t
 
 ## 🛠️ Configuration
 
-### 🖥️ For Vim users
+For a full list of configuration options you can run `:help codeium`.
+A few of the most popular options are highlighted below.
+
+### ⌨️  Keybindings
+
+Codeium provides the following functions to control suggestions:
+
+|Action|Function|Default Binding|
+|---|---|---|
+|Clear current suggestion| `codeium#Clear()` |`<C-]>`|
+|Next suggestion| `codeium#CycleCompletions(1)` |`<M-]>`|
+|Previous suggestion| `codeium#CycleCompletions(-1)` |`<M-[>`|
+|Insert suggestion| `codeium#Accept()` |`<Tab>`|
+|Manually trigger suggestion| `codeium#Complete()` |`<M-Bslash>`|
+
+Codeium's default keybindings can be disabled by setting
+
+```vim
+let g:codeium_disable_bindings = 1
+```
+
+or in Neovim:
+
+```vim
+vim.g.codeium_disable_bindings = 1
+```
+
+If you'd like to just disable the `<Tab>` binding, you can alternatively
+use the `g:codeium_no_map_tab` option.
+
+If you'd like to bind the actions above to different keys, this might look something like the following in Vim:
+
+
+```vim
+imap <C-g>   <Cmd>call codeium#Accept()<CR>
+imap <C-;>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-,>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x>   <Cmd>call codeium#Clear()<CR>
+```
+
+Or in Neovim (using [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins) or [folke/lazy.nvim](https://github.com/folke/lazy.nvim)):
+
+```lua
+-- Remove the `use` here if you're using folke/lazy.nvim.
+use {
+  'Exafunction/codeium.vim',
+  config = function ()
+    -- Change '<C-g>' here to any keycode you like.
+    vim.keymap.set('i', '<C-g>', function () return vim.fn['codeium#Accept']() end, { expr = true })
+    vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true })
+    vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true })
+    vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true })
+  end
+}
+```
+
+(Make sure that you ran `:Codeium Auth` after installation.)
+
+
+### ⛔ Disabling Codeium
 
 Codeium can be disabled for particular filetypes by setting the
 `g:codeium_filetypes` variable in your vim config file (vimrc/init.vim):
@@ -62,35 +121,6 @@ variable:
 ```vim
 let g:codeium_enabled = v:false
 ```
-
-For a full list of configuration options you can run `:help codeium`.
-
-### 💻 For Neovim users
-
-You can use the following Lua code to invoke the Vimscript function for autocompletion by this plugin:
-
-```lua
-vim.fn["codeium#Accept"]()
-```
-
-Since this function returns an **expression**, we need to specify it explicitly using `{ expr = true }`.
-Here is a working example for both [wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim#specifying-plugins)
-and [folke/lazy.nvim](https://github.com/folke/lazy.nvim):
-
-```lua
--- Remove the `use` here if you're using folke/lazy.nvim.
-use {
-  'Exafunction/codeium.vim',
-  config = function ()
-    -- Change '<C-g>' here to any keycode you like.
-    vim.keymap.set('i', '<C-g>', function ()
-      return vim.fn['codeium#Accept']()
-    end, { expr = true })
-  end
-}
-```
-
-(Make sure that you ran `:Codeium Auth` after installation.)
 
 
 ## 💾 Installation Options
