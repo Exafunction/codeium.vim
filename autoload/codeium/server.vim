@@ -1,5 +1,5 @@
-let s:language_server_version = '1.1.22'
-let s:language_server_sha = '0a0cf69c54bd02be577e1240463b85d782fa5475'
+let s:language_server_version = '1.1.23'
+let s:language_server_sha = '678c22cbe9c70993b6d80b3e98ac53b50d91676d'
 
 if has('nvim')
   let s:ide = 'neovim'
@@ -153,12 +153,12 @@ function! codeium#server#Start(timer) abort
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
     let s:server_job = jobstart(args, {
-                \ 'on_stderr': { channel, data, t -> codeium#log#Info("[SERVER] " . join(data, "\n")) },
+                \ 'on_stderr': { channel, data, t -> codeium#log#Info('[SERVER] ' . join(data, "\n")) },
                 \ })
   else
     let s:server_job = job_start(args, {
                 \ 'out_mode': 'raw',
-                \ 'err_cb': { channel, data -> codeium#log#Info("[SERVER] " . data) },
+                \ 'err_cb': { channel, data -> codeium#log#Info('[SERVER] ' . data) },
                 \ })
   endif
   call timer_start(500, function('s:FindPort', [manager_dir]), {'repeat': -1})
