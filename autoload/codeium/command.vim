@@ -12,7 +12,7 @@ endfunction
 
 function! s:Uuid() abort
   if has('win32')
-    return system('powershell -Command "[guid]::NewGuid()"')
+    return system('powershell -Command "[guid]::NewGuid().Guid"')
   elseif executable('uuidgen')
     return system('uuidgen')
   endif
@@ -69,7 +69,7 @@ function! s:commands.Auth(...) abort
 
     echo 'Navigating to ' . url
     try
-      call system(browser . ' ' . "'" . url . "'")
+      call system(browser . ' ' . '"' . url . '"')
       if v:shell_error is# 0
         let opened_browser = v:true
       endif
@@ -90,7 +90,7 @@ function! s:commands.Auth(...) abort
   while empty(api_key) && tries < 3
     let command = 'curl -s https://api.codeium.com/register_user/ ' .
           \ '--header "Content-Type: application/json" ' .
-          \ '--data ' . "'" . json_encode({'firebase_id_token': auth_token}) . "'"
+          \ '--data ' . '"' . json_encode({'firebase_id_token': auth_token})->substitute('"', '\\"', 'g') . '"'
     let response = system(command)
     let res = json_decode(response)
     let api_key = get(res, 'api_key', '')
