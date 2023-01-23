@@ -36,12 +36,13 @@ augroup codeium
   autocmd VimEnter             * call s:MapTab()
 augroup END
 
-if !get(g:, 'codeium_disable_bindings')
-  imap <Plug>(codeium-dismiss)     <Cmd>call codeium#Clear()<CR>
-  imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
-  imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
-  imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
 
+imap <Plug>(codeium-dismiss)     <Cmd>call codeium#Clear()<CR>
+imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
+
+if !get(g:, 'codeium_disable_bindings')
   if empty(mapcheck('<C-]>', 'i'))
     imap <silent><script><nowait><expr> <C-]> codeium#Clear() . "\<C-]>"
   endif
