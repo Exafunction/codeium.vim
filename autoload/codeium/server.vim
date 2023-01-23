@@ -1,11 +1,9 @@
-let s:language_server_version = '1.2.104'
-let s:language_server_sha = 'ab59278dfa738977096f6bfc2299d9941fcc3252'
-let s:root = expand('<sfile>:h:h:h')
-let s:bin = v:null
+let s:language_server_version = '1.1.22'
+let s:language_server_sha = '0a0cf69c54bd02be577e1240463b85d782fa5475'
 
 if has('nvim')
   let s:ide = 'neovim'
-else
+else 
   let s:ide = 'vim'
 endif
 
@@ -25,7 +23,7 @@ if !exists('s:editor_version')
 endif
 
 let s:server_port = v:null
-let g:codeium_server_job = v:null
+let s:server_job = v:null
 
 function! s:OnExit(result, status, on_complete_cb) abort
   let did_close = has_key(a:result, 'closed')
@@ -56,7 +54,6 @@ function! codeium#server#RequestMetadata() abort
         \ 'api_key': codeium#command#ApiKey(),
         \ 'ide_name':  s:ide,
         \ 'ide_version':  s:ide_version,
-        \ 'extension_name': 'vim',
         \ 'extension_version':  s:language_server_version,
         \ }
 endfunction
@@ -65,36 +62,27 @@ function! codeium#server#Request(type, data, ...) abort
   if s:server_port is# v:null
     throw 'Server port has not been properly initialized.'
   endif
-  let uri = 'http://localhost:' . s:server_port .
+  let uri = 'http://localhost:' . s:server_port . 
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
-  let data = json_encode(a:data)
   let args = [
               \ 'curl', uri,
               \ '--header', 'Content-Type: application/json',
-              \ '-d@-'
+              \ '--data', json_encode(a:data)
               \ ]
   let result = {'out': []}
   let ExitCallback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
   if has('nvim')
-    let jobid = jobstart(args, {
+    return jobstart(args, {
                 \ 'on_stdout': { channel, data, t -> add(result.out, join(data, "\n")) },
                 \ 'on_exit': { job, status, t -> ExitCallback(result.out, status) },
                 \ })
-    call chansend(jobid, data)
-    call chanclose(jobid, 'stdin')
-    return jobid
   else
-    let job = job_start(args, {
-                \ 'in_mode': 'raw',
+    return job_start(args, {
                 \ 'out_mode': 'raw',
                 \ 'out_cb': { channel, data -> add(result.out, data) },
                 \ 'exit_cb': { job, status -> s:OnExit(result, status, ExitCallback) },
                 \ 'close_cb': { channel -> s:OnClose(result, ExitCallback) }
                 \ })
-    let channel = job_getchannel(job)
-    call ch_sendraw(channel, data)
-    call ch_close_in(channel)
-    return job
   endif
 endfunction
 
@@ -119,9 +107,9 @@ function! s:SendHeartbeat(timer) abort
   endtry
 endfunction
 
-function! codeium#server#Start(...) abort
-  silent let os = substitute(system('uname'), '\n', '', '')
-  silent let arch = substitute(system('uname -m'), '\n', '', '')
+function! codeium#server#Start(timer) abort
+  let os = substitute(system('uname'), '\n', '', '')
+  let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
   if os ==# 'Linux' && is_arm
@@ -136,89 +124,41 @@ function! codeium#server#Start(...) abort
     let bin_suffix = 'windows_x64.exe'
   endif
 
-  let sha = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'sha', s:language_server_sha)
-  let bin_dir = codeium#command#HomeDir() . '/bin/' . sha
-  let s:bin = bin_dir . '/language_server_' . bin_suffix
+  let bin_dir = codeium#command#ConfigDir() . '/bin/' . s:language_server_sha
+  let bin = bin_dir . '/language_server_' . bin_suffix
   call mkdir(bin_dir, 'p')
 
-  if !filereadable(s:bin)
-    call delete(s:bin)
-    if sha ==# s:language_server_sha
-      let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
-    else
-      let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
-    endif
-    let args = ['curl', '-Lo', s:bin . '.gz', url]
-    if has('nvim')
-      let s:download_job = jobstart(args, {'on_exit': { job, status, t -> s:UnzipAndStart(status) }})
-    else
-      let s:download_job = job_start(args, {'exit_cb': { job, status -> s:UnzipAndStart(status) }})
-    endif
-  else
-    call s:ActuallyStart()
-  endif
-endfunction
-
-function! s:UnzipAndStart(status) abort
-  if has('win32')
-    " Save old settings.
-    let old_shell = &shell
-    let old_shellquote = &shellquote
-    let old_shellpipe = &shellpipe
-    let old_shellxquote = &shellxquote
-    let old_shellcmdflag = &shellcmdflag
-    let old_shellredir = &shellredir
-    " Switch to powershell.
-    let &shell = 'powershell'
-    set shellquote= shellpipe=\| shellxquote=
-    set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
-    set shellredir=\|\ Out-File\ -Encoding\ UTF8
-    call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
-    " Restore old settings.
-    let &shell = old_shell
-    let &shellquote = old_shellquote
-    let &shellpipe = old_shellpipe
-    let &shellxquote = old_shellxquote
-    let &shellcmdflag = old_shellcmdflag
-    let &shellredir = old_shellredir
-  else
-    if !executable('gzip')
-      call codeium#log#Error('Failed to extract language server binary: missing `gzip`.')
+  if empty(glob(bin))
+    let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+    call system('curl -Lo ' . bin . '.gz' . ' ' . url)
+    call system('gzip -d ' . bin . '.gz')
+    call system('chmod +x ' . bin)
+    if empty(glob(bin))
+      call codeium#log#Error('Failed to download language server binary.')
       return ''
     endif
-    call system('gzip -d ' . s:bin . '.gz')
-    call system('chmod +x ' . s:bin)
   endif
-  if !filereadable(s:bin)
-    call codeium#log#Error('Failed to download language server binary.')
-    return ''
-  endif
-  call s:ActuallyStart()
-endfunction
 
-function! s:ActuallyStart() abort
   let config = get(g:, 'codeium_server_config', {})
   let manager_dir = tempname() . '/codeium/manager'
   call mkdir(manager_dir, 'p')
 
   let args = [
-        \ s:bin,
-        \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
+        \ bin,
+        \ '--api_server_host', get(config, 'api_host', 'server.codeium.com'),
+        \ '--api_server_port', get(config, 'api_port', '443'),
         \ '--manager_dir', manager_dir
         \ ]
-  if has_key(config, 'api_url') && !empty(config.api_url)
-    let args += ['--enterprise_mode']
-  endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
-    let g:codeium_server_job = jobstart(args, {
-                \ 'on_stderr': { channel, data, t -> codeium#log#Info('[SERVER] ' . join(data, "\n")) },
+    let s:server_job = jobstart(args, {
+                \ 'on_stderr': { channel, data, t -> codeium#log#Info("[SERVER] " . join(data, "\n")) },
                 \ })
   else
-    let g:codeium_server_job = job_start(args, {
+    let s:server_job = job_start(args, {
                 \ 'out_mode': 'raw',
-                \ 'err_cb': { channel, data -> codeium#log#Info('[SERVER] ' . data) },
+                \ 'err_cb': { channel, data -> codeium#log#Info("[SERVER] " . data) },
                 \ })
   endif
   call timer_start(500, function('s:FindPort', [manager_dir]), {'repeat': -1})
