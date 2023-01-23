@@ -47,6 +47,13 @@ g:codeium_enabled       A global boolean flag that controls whether codeium
                         let g:codeium_enabled = v:true
 <
 
+                                                *g:codeium_no_map_tab*
+g:codeium_no_map_tab    A global boolean flag that controls whether codeium
+                        uses <TAB> for the mapping codeium#Accept
+>
+                        let g:codeium_no_map_tab = v:true
+<
+
 MAPS                                            *codeium-maps*
 
                                                 *codeium-i_<Tab>*

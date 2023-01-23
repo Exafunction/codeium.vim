@@ -19,7 +19,9 @@ function! s:SetStyle() abort
 endfunction
 
 function! s:MapTab() abort
-  imap <script><silent><nowait><expr> <Tab> codeium#Accept()
+  if !get(g:, 'codeium_no_map_tab', v:false)
+    imap <script><silent><nowait><expr> <Tab> codeium#Accept()
+  endif
 endfunction
 
 augroup codeium
