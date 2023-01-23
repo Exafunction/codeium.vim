@@ -19,7 +19,7 @@ function! s:SetStyle() abort
 endfunction
 
 function! s:MapTab() abort
-  if !get(g:, 'codeium_no_map_tab', v:false)
+  if !get(g:, 'codeium_no_map_tab', v:false) && !get(g:, 'codeium_disable_bindings')
     imap <script><silent><nowait><expr> <Tab> codeium#Accept()
   endif
 endfunction
@@ -36,21 +36,24 @@ augroup codeium
   autocmd VimEnter             * call s:MapTab()
 augroup END
 
-imap <Plug>(codeium-dismiss)     <Cmd>call codeium#Clear()<CR>
-if empty(mapcheck('<C-]>', 'i'))
-  imap <silent><script><nowait><expr> <C-]> codeium#Clear() . "\<C-]>"
-endif
-imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
-imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
-imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
-if empty(mapcheck('<M-]>', 'i'))
-  imap <M-]> <Plug>(codeium-next)
-endif
-if empty(mapcheck('<M-[>', 'i'))
-  imap <M-[> <Plug>(codeium-previous)
-endif
-if empty(mapcheck('<M-Bslash>', 'i'))
-  imap <M-Bslash> <Plug>(codeium-complete)
+if !get(g:, 'codeium_disable_bindings')
+  imap <Plug>(codeium-dismiss)     <Cmd>call codeium#Clear()<CR>
+  imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
+  imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
+  imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
+
+  if empty(mapcheck('<C-]>', 'i'))
+    imap <silent><script><nowait><expr> <C-]> codeium#Clear() . "\<C-]>"
+  endif
+  if empty(mapcheck('<M-]>', 'i'))
+    imap <M-]> <Plug>(codeium-next)
+  endif
+  if empty(mapcheck('<M-[>', 'i'))
+    imap <M-[> <Plug>(codeium-previous)
+  endif
+  if empty(mapcheck('<M-Bslash>', 'i'))
+    imap <M-Bslash> <Plug>(codeium-complete)
+  endif
 endif
 
 call s:SetStyle()
