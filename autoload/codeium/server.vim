@@ -1,5 +1,6 @@
 let s:language_server_version = '1.1.22'
 let s:language_server_sha = '0a0cf69c54bd02be577e1240463b85d782fa5475'
+let s:root = expand('<sfile>:h:h:h')
 
 if has('nvim')
   let s:ide = 'neovim'
@@ -130,9 +131,13 @@ function! codeium#server#Start(timer) abort
 
   if empty(glob(bin))
     let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
-    call system('curl -Lo ' . bin . '.gz' . ' ' . url)
-    call system('gzip -d ' . bin . '.gz')
-    call system('chmod +x ' . bin)
+    if has("win32")
+      call system('powershell -Command "& { . ' . s:root . '/powershell/gzip.ps1; DeGZip-File ' . bin . '.gz' . ' }"')
+    else
+      call system('curl -Lo ' . bin . '.gz' . ' ' . url)
+      call system('gzip -d ' . bin . '.gz')
+      call system('chmod +x ' . bin)
+    endif
     if empty(glob(bin))
       call codeium#log#Error('Failed to download language server binary.')
       return ''
