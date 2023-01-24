@@ -1,5 +1,7 @@
 let s:language_server_version = '1.1.23'
 let s:language_server_sha = '678c22cbe9c70993b6d80b3e98ac53b50d91676d'
+let s:root = expand('<sfile>:h:h:h')
+
 
 if has('nvim')
   let s:ide = 'neovim'
@@ -130,9 +132,32 @@ function! codeium#server#Start(timer) abort
 
   if empty(glob(bin))
     let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
-    call system('curl -Lo ' . bin . '.gz' . ' ' . url)
-    call system('gzip -d ' . bin . '.gz')
-    call system('chmod +x ' . bin)
+    call system('curl -Lo ' . shellescape(bin . '.gz') . ' ' . url)
+    if has("win32")
+      " Save old settings.
+      let old_shell = &shell
+      let old_shellquote = &shellquote
+      let old_shellpipe = &shellpipe
+      let old_shellxquote = &shellxquote
+      let old_shellcmdflag = &shellcmdflag
+      let old_shellredir = &shellredir
+      " Switch to powershell.
+      let &shell = 'powershell'
+      set shellquote= shellpipe=\| shellxquote=
+      set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
+      set shellredir=\|\ Out-File\ -Encoding\ UTF8
+      call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(bin . '.gz') . ' }')
+      " Restore old settings.
+      let &shell = old_shell
+      let &shellquote = old_shellquote
+      let &shellpipe = old_shellpipe
+      let &shellxquote = old_shellxquote
+      let &shellcmdflag = old_shellcmdflag
+      let &shellredir = old_shellredir
+    else
+      call system('gzip -d ' . bin . '.gz')
+      call system('chmod +x ' . bin)
+    endif
     if empty(glob(bin))
       call codeium#log#Error('Failed to download language server binary.')
       return ''
