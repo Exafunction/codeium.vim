@@ -1,4 +1,4 @@
-Function DeGZip-File
+Function Expand-File
 {
     Param(
         $infile,
@@ -22,4 +22,5 @@ Function DeGZip-File
     $gzipStream.Close()
     $output.Close()
     $in.Close()
+    Remove-Item $infile
 }
