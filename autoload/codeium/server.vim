@@ -131,10 +131,10 @@ function! codeium#server#Start(timer) abort
 
   if empty(glob(bin))
     let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+    call system('curl -Lo ' . bin . '.gz' . ' ' . url)
     if has("win32")
       call system('powershell -Command "& { . ' . s:root . '/powershell/gzip.ps1; DeGZip-File ' . bin . '.gz' . ' }"')
     else
-      call system('curl -Lo ' . bin . '.gz' . ' ' . url)
       call system('gzip -d ' . bin . '.gz')
       call system('chmod +x ' . bin)
     endif
