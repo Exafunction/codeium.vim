@@ -1,5 +1,5 @@
-let s:language_server_version = '1.1.23'
-let s:language_server_sha = '678c22cbe9c70993b6d80b3e98ac53b50d91676d'
+let s:language_server_version = '1.1.24'
+let s:language_server_sha = 'd929e041e3d302aced22c27f8675ba2a94f37e28'
 let s:root = expand('<sfile>:h:h:h')
 
 
@@ -56,6 +56,7 @@ function! codeium#server#RequestMetadata() abort
         \ 'api_key': codeium#command#ApiKey(),
         \ 'ide_name':  s:ide,
         \ 'ide_version':  s:ide_version,
+        \ 'extension_name': 'vim',
         \ 'extension_version':  s:language_server_version,
         \ }
 endfunction
@@ -126,14 +127,14 @@ function! codeium#server#Start(timer) abort
     let bin_suffix = 'windows_x64.exe'
   endif
 
-  let bin_dir = codeium#command#ConfigDir() . '/bin/' . s:language_server_sha
+  let bin_dir = codeium#command#HomeDir() . '/bin/' . s:language_server_sha
   let bin = bin_dir . '/language_server_' . bin_suffix
   call mkdir(bin_dir, 'p')
 
   if empty(glob(bin))
     let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
     call system('curl -Lo ' . shellescape(bin . '.gz') . ' ' . url)
-    if has("win32")
+    if has('win32')
       " Save old settings.
       let old_shell = &shell
       let old_shellquote = &shellquote
