@@ -1,11 +1,11 @@
-let s:language_server_version = '1.1.24'
-let s:language_server_sha = 'd929e041e3d302aced22c27f8675ba2a94f37e28'
+let s:language_server_version = '1.1.28'
+let s:language_server_sha = '432f829edc3b3d25a8b895a0db8db6e348620ab3'
 let s:root = expand('<sfile>:h:h:h')
 
 
 if has('nvim')
   let s:ide = 'neovim'
-else 
+else
   let s:ide = 'vim'
 endif
 
@@ -65,7 +65,7 @@ function! codeium#server#Request(type, data, ...) abort
   if s:server_port is# v:null
     throw 'Server port has not been properly initialized.'
   endif
-  let uri = 'http://localhost:' . s:server_port . 
+  let uri = 'http://localhost:' . s:server_port .
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
   let args = [
               \ 'curl', uri,
