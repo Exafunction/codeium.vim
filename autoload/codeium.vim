@@ -70,8 +70,8 @@ function! codeium#Accept() abort
     if start_row == end_row
       if end_col > start_col
         let delete_text = move_to_start . "\<C-O>d" . (end_col - start_col) . 'l'
-      endif 
-    else 
+      endif
+    else
       " Delete last line, then intermediate lines.
       let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
     endif
@@ -103,8 +103,8 @@ endfunction
 
 function! s:GetCurrentCompletionItem() abort
   if exists('b:_codeium_completions') &&
-        \ has_key(b:_codeium_completions, 'items') && 
-        \ has_key(b:_codeium_completions, 'index') && 
+        \ has_key(b:_codeium_completions, 'items') &&
+        \ has_key(b:_codeium_completions, 'index') &&
         \ b:_codeium_completions.index < len(b:_codeium_completions.items)
     return get(b:_codeium_completions.items, b:_codeium_completions.index)
   endif
@@ -151,23 +151,9 @@ function! s:RenderCurrentCompletion() abort
   for part in parts
     let [row, col] = codeium#util#OffsetToPosition(part.offset)
     let text = part.text
-
-    if part.type ==# 'COMPLETION_PART_TYPE_INLINE' && idx == 0
-      " For first inline completion, strip any characters the user has typed
-      " that match the start of the completion.
-      let cursor_col = col('.')
-      let typed = strpart(getline('.'), col - 1, cursor_col - 1)
-      if strpart(text, 0, len(typed)) != typed
-        call s:ClearCompletion()
-        return ''
-      endif
-      let text = strpart(text, len(typed))
-      let col += len(typed)
-    endif
-
     if has('nvim')
-      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': virtcol('.') - 1}
-      if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
+      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': col - 1}
+      if part.type ==# 'COMPLETION_PART_TYPE_INLINE_MASK'
         let data.virt_text = [[text, s:hlgroup]]
       elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
         let lines = split(text, "\n", 1)
@@ -200,7 +186,7 @@ function! s:RenderCurrentCompletion() abort
   endfor
 endfunction
 
-function! codeium#Clear(...) abort 
+function! codeium#Clear(...) abort
   if exists('g:_codeium_timer')
     call timer_stop(remove(g:, '_codeium_timer'))
   endif
@@ -247,7 +233,7 @@ function! codeium#Complete(...) abort
     let bufnr = a:1
     let timer = a:2
 
-    if timer isnot# get(g:, '_codeium_timer', -1) 
+    if timer isnot# get(g:, '_codeium_timer', -1)
       return
     endif
 
@@ -271,7 +257,7 @@ function! codeium#Complete(...) abort
         \ 'document': codeium#doc#GetCurrentDocument(),
         \ 'editor_options': codeium#doc#GetEditorOptions()
         \ }
-    
+
   if exists('b:_codeium_completions.request_data') && b:_codeium_completions.request_data ==# data
     return
   endif
