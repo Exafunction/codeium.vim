@@ -90,7 +90,15 @@ function! s:HandleCompletionsResult(out, status) abort
       let response = json_decode(response_text)
       let completionItems = get(response, 'completionItems', [])
 
-      let b:_codeium_completions.items = completionItems
+      let b:_codeium_completions.items = []
+      let keys = []
+      for item in completionItems
+        if index(keys, item.completion.text) == -1
+          call add(keys, item.completion.text)
+          call add(b:_codeium_completions.items, item)
+        endif
+      endfor
+
       let b:_codeium_completions.index = 0
 
       call s:RenderCurrentCompletion()
