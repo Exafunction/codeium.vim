@@ -1,5 +1,5 @@
-let s:language_server_version = '1.1.28'
-let s:language_server_sha = '432f829edc3b3d25a8b895a0db8db6e348620ab3'
+let s:language_server_version = '1.1.32'
+let s:language_server_sha = '0dbb8f6aa46dcab5cb92375ab784437573eb20b4'
 let s:root = expand('<sfile>:h:h:h')
 
 
@@ -110,7 +110,7 @@ function! s:SendHeartbeat(timer) abort
   endtry
 endfunction
 
-function! codeium#server#Start(timer) abort
+function! codeium#server#Start(...) abort
   let os = substitute(system('uname'), '\n', '', '')
   let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
