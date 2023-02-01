@@ -119,7 +119,7 @@ function! s:SendHeartbeat(timer) abort
   endtry
 endfunction
 
-function! codeium#server#Start() abort
+function! codeium#server#Start(...) abort
   let os = substitute(system('uname'), '\n', '', '')
   let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
