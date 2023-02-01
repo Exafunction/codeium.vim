@@ -58,7 +58,7 @@ if !get(g:, 'codeium_disable_bindings')
 endif
 
 call s:SetStyle()
-call timer_start(0, function('codeium#server#Start'))
+call codeium#server#Start()
 
 let s:dir = expand('<sfile>:h:h')
 if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
