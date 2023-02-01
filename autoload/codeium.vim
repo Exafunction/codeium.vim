@@ -1,13 +1,9 @@
 let s:hlgroup = 'CodeiumSuggestion'
-let s:annot_hlgroup = 'CodeiumAnnotation'
 let s:request_nonce = 0
 
 if !has('nvim')
   if empty(prop_type_get(s:hlgroup))
     call prop_type_add(s:hlgroup, {'highlight': s:hlgroup})
-  endif
-  if empty(prop_type_get(s:annot_hlgroup))
-    call prop_type_add(s:annot_hlgroup, {'highlight': s:annot_hlgroup})
   endif
 endif
 
@@ -52,8 +48,9 @@ function! codeium#Accept() abort
     let end_offset = get(range, 'endOffset', 0)
     let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
     let [end_row, end_col] = codeium#util#OffsetToPosition(end_offset)
-    let suffix = get(current_completion.completion, 'suffix', {})
+    let suffix = get(current_completion, 'suffix', {})
     let suffix_text = get(suffix, 'text', '')
+    let delta = get(suffix, 'deltaCursorOffset', 0)
 
     let text = current_completion.completion.text . suffix_text
     if empty(text)
@@ -76,8 +73,13 @@ function! codeium#Accept() abort
       let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
     endif
 
+    if delta == 0
+      let cursor_text = ''
+    else
+      let cursor_text = "\<C-O>:call call('cursor', codeium#util#OffsetToPosition(codeium#util#PositionToOffset('.', '.') + (" . delta . ")))\<CR>"
+    endif
     call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
-    return delete_text . insert_text
+    return delete_text . insert_text . cursor_text
   endif
 
   return default
@@ -123,7 +125,6 @@ function! s:ClearCompletion() abort
     let s:nvim_extmark_ids = []
   else
     call prop_remove({'type': s:hlgroup, 'all': v:true})
-    call prop_remove({'type': s:annot_hlgroup, 'all': v:true})
   endif
 endfunction
 
@@ -141,18 +142,68 @@ function! s:RenderCurrentCompletion() abort
   let start_offset = get(current_completion.range, 'startOffset', 0)
   let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
   if start_row != line('.')
-    call codeium#log#Info('Ignoring completion, line number is not the current line.')
+    call codeium#log#Warn('Ignoring completion, line number is not the current line.')
     return ''
   endif
 
   let parts = get(current_completion, 'completionParts', [])
 
   let idx = 0
+  let inline_cumulative_cols = 0
+  let diff = 0
   for part in parts
-    let [row, col] = codeium#util#OffsetToPosition(part.offset)
+    let row = get(part, 'line', 0) + 1
+    if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
+      let _col = inline_cumulative_cols + len(get(part, 'prefix', '')) + 1
+      let inline_cumulative_cols = _col - 1
+    else
+      let _col = len(get(part, 'prefix', '')) + 1
+    endif
     let text = part.text
+
+    if (part.type ==# 'COMPLETION_PART_TYPE_INLINE' && idx == 0) || part.type ==# 'COMPLETION_PART_TYPE_INLINE_MASK'
+      let completion_prefix = get(part, 'prefix', '')
+      let completion_line = completion_prefix . text
+      let full_line = getline(row)
+      let cursor_prefix = strpart(full_line, 0, col('.')-1)
+      let matching_prefix = 0
+      for i in range(len(completion_line))
+        if i < len(full_line) && completion_line[i] ==# full_line[i]
+          let matching_prefix += 1
+        else
+          break
+        endif
+      endfor
+      if len(cursor_prefix) > len(completion_prefix)
+        " Case where the cursor is beyond the completion (as if it added text).
+        " We should always consume text regardless of matching or not.
+        let diff = len(cursor_prefix) - len(completion_prefix)
+      elseif len(cursor_prefix) < len(completion_prefix)
+        " Case where the cursor is before the completion.
+        " It could just be a cursor move, in which case the matching prefix goes
+        " all the way to the completion prefix or beyond. Then we shouldn't do
+        " anything.
+        if matching_prefix >= len(completion_prefix)
+          let diff = matching_prefix - len(completion_prefix)
+        else
+          let diff = len(cursor_prefix) - len(completion_prefix)
+        endif
+      endif
+      if has('nvim') && diff > 0
+        let diff = 0
+      endif
+      " Adjust completion. diff needs to be applied to all inline parts and is
+      " done below.
+      if diff < 0
+        let text = completion_prefix[diff :] . text
+      elseif diff > 0
+        let text = text[diff :]
+      endif
+    endif
+
     if has('nvim')
-      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': col - 1}
+      let _virtcol = virtcol([row, _col+diff])
+      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': _virtcol - 1}
       if part.type ==# 'COMPLETION_PART_TYPE_INLINE_MASK'
         let data.virt_text = [[text, s:hlgroup]]
       elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
@@ -166,10 +217,10 @@ function! s:RenderCurrentCompletion() abort
       endif
 
       call add(s:nvim_extmark_ids, data.id)
-      call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, col - 1, data)
+      call nvim_buf_set_extmark(0, nvim_create_namespace('codeium'), row - 1, 0, data)
     else
       if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
-        call prop_add(row, col, {'type': s:hlgroup, 'text': text})
+        call prop_add(row, _col + diff, {'type': s:hlgroup, 'text': text})
       elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
         let text = split(part.text, "\n", 1)
         if empty(text[-1])
