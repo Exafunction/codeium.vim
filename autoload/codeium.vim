@@ -95,6 +95,7 @@ function! s:HandleCompletionsResult(out, status) abort
       let b:_codeium_completions.items = completionItems
       let b:_codeium_completions.index = 0
 
+      let b:_codeium_status = 2
       call s:RenderCurrentCompletion()
     catch
       call codeium#log#Error('Invalid response from language server')
@@ -130,6 +131,7 @@ endfunction
 
 function! s:RenderCurrentCompletion() abort
   call s:ClearCompletion()
+  redrawstatus
 
   if mode() !~# '^[iR]' || (v:false && pumvisible())
     return ''
@@ -238,6 +240,8 @@ function! s:RenderCurrentCompletion() abort
 endfunction
 
 function! codeium#Clear(...) abort
+  let b:_codeium_status = 0
+  redrawstatus
   if exists('g:_codeium_timer')
     call timer_stop(remove(g:, '_codeium_timer'))
   endif
@@ -254,6 +258,7 @@ function! codeium#Clear(...) abort
     endif
     call s:RenderCurrentCompletion()
     unlet! b:_codeium_completions
+
   endif
 
   if a:0 == 0
@@ -321,6 +326,7 @@ function! codeium#Complete(...) abort
   let data.metadata.request_id = request_id
 
   try
+    let b:_codeium_status = 1
     let request_job = codeium#server#Request('GetCompletions', data, function('s:HandleCompletionsResult', []))
 
     let b:_codeium_completions = {
@@ -328,6 +334,7 @@ function! codeium#Complete(...) abort
           \ 'request_id': request_id,
           \ 'job': request_job
           \ }
+    redrawstatus
   catch
     call codeium#log#Exception()
   endtry
@@ -339,3 +346,31 @@ function! codeium#DebouncedComplete(...) abort
   let delay = get(g:, 'codeium_idle_delay', 75)
   let g:_codeium_timer = timer_start(delay, function('codeium#Complete', [current_buf]))
 endfunction
+
+function! codeium#GetStatusString(...) abort
+  if (!codeium#Enabled())
+    return 'OFF'
+  endif
+  if mode() !~# '^[iR]'
+    return ' ON'
+  endif
+  if exists('b:_codeium_status') && b:_codeium_status > 0
+    if b:_codeium_status == 2
+      if exists('b:_codeium_completions') &&
+          \ has_key(b:_codeium_completions, 'items') &&
+          \ has_key(b:_codeium_completions, 'index')
+        if len(b:_codeium_completions.items) > 0
+          return printf("%d/%d", b:_codeium_completions.index + 1, len(b:_codeium_completions.items))
+        else
+          return ' 0 '
+        endif
+      endif
+    endif
+    if b:_codeium_status == 1
+      return ' * '
+    endif
+    return ' 0 '
+  endif
+  return '   '
+endfunction
+
