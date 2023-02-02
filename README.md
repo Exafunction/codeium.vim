@@ -135,9 +135,17 @@ In normal mode, status shows if Codeium is enabled or disabled by showing
 
 In order to show it in status line add following line to your `.vimrc`:
 
+```set statusline+=\{…\}%3{codeium#GetStatusString()}```
+
+Shorter variant without Codeium logo:
+
 ```set statusline+=%3{codeium#GetStatusString()}```
 
 Please check `:help statusline` for further information about building statusline in VIM.
+
+For vim-airline extension you can use following config:
+
+```let g:airline_section_y = '{…}%3{codeium#GetStatusString()}'```
 
 ## 💾 Installation Options
 
