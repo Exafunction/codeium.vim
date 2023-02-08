@@ -141,13 +141,6 @@ function! s:RenderCurrentCompletion() abort
     return ''
   endif
 
-  let start_offset = get(current_completion.range, 'startOffset', 0)
-  let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
-  if start_row != line('.')
-    call codeium#log#Warn('Ignoring completion, line number is not the current line.')
-    return ''
-  endif
-
   let parts = get(current_completion, 'completionParts', [])
 
   let idx = 0
@@ -155,6 +148,10 @@ function! s:RenderCurrentCompletion() abort
   let diff = 0
   for part in parts
     let row = get(part, 'line', 0) + 1
+    if row != line('.')
+      call codeium#log#Warn('Ignoring completion, line number is not the current line.')
+      continue
+    endif
     if part.type ==# 'COMPLETION_PART_TYPE_INLINE'
       let _col = inline_cumulative_cols + len(get(part, 'prefix', '')) + 1
       let inline_cumulative_cols = _col - 1
@@ -360,7 +357,7 @@ function! codeium#GetStatusString(...) abort
           \ has_key(b:_codeium_completions, 'items') &&
           \ has_key(b:_codeium_completions, 'index')
         if len(b:_codeium_completions.items) > 0
-          return printf("%d/%d", b:_codeium_completions.index + 1, len(b:_codeium_completions.items))
+          return printf('%d/%d', b:_codeium_completions.index + 1, len(b:_codeium_completions.items))
         else
           return ' 0 '
         endif
@@ -373,4 +370,3 @@ function! codeium#GetStatusString(...) abort
   endif
   return '   '
 endfunction
-
