@@ -64,14 +64,7 @@ function! s:commands.Auth(...) abort
   let browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
-    echo 'Press ENTER to login to Codeium in your browser.'
-
-    let c = getchar()
-    while c isnot# 13 && c isnot# 10 && c isnot# 0
-      let c = getchar()
-    endwhile
-
-    echo 'Navigating to ' . url
+    echomsg 'Navigating to ' . url
     try
       call system(browser . ' ' . '"' . url . '"')
       if v:shell_error is# 0
@@ -81,14 +74,16 @@ function! s:commands.Auth(...) abort
     endtry
 
     if !opened_browser
-      echo 'Failed to open browser. Please go to the link above.'
+      echomsg 'Failed to open browser. Please go to the link above.'
     endif
   else
-    echo 'No available browser found. Please go to ' . url
+    echomsg 'No available browser found. Please go to ' . url
   endif
 
   let api_key = ''
-  let auth_token = input('Paste your token here: ')
+  call inputsave()
+  let auth_token = inputsecret('Paste your token here: ')
+  call inputrestore()
   let tries = 0
 
   while empty(api_key) && tries < 3
@@ -99,7 +94,9 @@ function! s:commands.Auth(...) abort
     let res = json_decode(response)
     let api_key = get(res, 'api_key', '')
     if empty(api_key)
-      let auth_token = input('Invalid token, please try again: ')
+      call inputsave()
+      let auth_token = inputsecret('Invalid token, please try again: ')
+      call inputrestore()
     endif
     let tries = tries + 1
   endwhile
