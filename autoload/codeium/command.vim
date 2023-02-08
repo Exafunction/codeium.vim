@@ -94,6 +94,7 @@ function! s:commands.Auth(...) abort
     let res = json_decode(response)
     let api_key = get(res, 'api_key', '')
     if empty(api_key)
+      echomsg 'Unexpected response: ' . response
       call inputsave()
       let auth_token = inputsecret('Invalid token, please try again: ')
       call inputrestore()
