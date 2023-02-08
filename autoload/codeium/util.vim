@@ -5,14 +5,7 @@ let s:line_endings = {
       \ }
 
 function! codeium#util#LineEndingChars(...) abort
-  if has_key(s:line_endings, &fileformat)
-    return get(s:line_endings, &fileformat)
-  endif
-  if a:0 && !empty(a:1)
-    return a:1
-  else
-    return "\n"
-  endif
+  return "\n"
 endfunction
 
 function! codeium#util#UTF8Width(str) abort
