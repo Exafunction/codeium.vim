@@ -82,7 +82,7 @@ function! codeium#doc#GetCurrentDocument() abort
         \ 'text': join(lines, codeium#util#LineEndingChars()),
         \ 'editor_language': &filetype,
         \ 'language': get(s:language_enum, language, 0),
-        \ 'cursor_offset': codeium#util#PositionToOffset('.', '.'),
+        \ 'cursor_position': {'row': line('.') - 1, 'col': col('.') - 1},
         \ }
 
   let line_ending = codeium#util#LineEndingChars(v:null)
