@@ -55,7 +55,7 @@ function! s:commands.Auth(...) abort
     else
       let min_version = 'Vim 9.0.0185'
     endif
-    echo 'This version of Vim is unsupported. Install ' . min_version . ' or greater to use Codeium.'
+    echoerr 'This version of Vim is unsupported. Install ' . min_version . ' or greater to use Codeium.'
     return
   endif
 
@@ -87,9 +87,9 @@ function! s:commands.Auth(...) abort
   let tries = 0
 
   while empty(api_key) && tries < 3
-    let command = ['curl', '-sS', 'https://api.codeium.com/register_user/',
-          \ '--header', 'Content-Type: application/json',
-          \ '--data', json_encode({'firebase_id_token': auth_token})]
+    let command = 'curl -sS https://api.codeium.com/register_user/ ' .
+          \ '--header "Content-Type: application/json" ' .
+          \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
     let response = system(command)
     let res = json_decode(response)
     let api_key = get(res, 'api_key', '')
