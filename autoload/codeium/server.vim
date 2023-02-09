@@ -1,5 +1,5 @@
-let s:language_server_version = '1.1.36'
-let s:language_server_sha = '1269e4455c9aa8767cee7cd5eb4e128df5576e8e'
+let s:language_server_version = '1.1.37'
+let s:language_server_sha = 'b76f6b7c3ca0fe01255b6d2000d207ec43b18f23'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -136,12 +136,17 @@ function! codeium#server#Start(...) abort
     let bin_suffix = 'windows_x64.exe'
   endif
 
-  let bin_dir = codeium#command#HomeDir() . '/bin/' . s:language_server_sha
+  let sha = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'sha', s:language_server_sha)
+  let bin_dir = codeium#command#HomeDir() . '/bin/' . sha
   let s:bin = bin_dir . '/language_server_' . bin_suffix
   call mkdir(bin_dir, 'p')
 
   if empty(glob(s:bin))
-    let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+    if sha ==# s:language_server_sha
+      let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+    else
+      let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
+    endif
     let args = ['curl', '-Lo', s:bin . '.gz', url]
     if has('nvim')
       let s:download_job = jobstart(args, {'on_exit': { job, status, t -> s:UnzipAndStart(status) }})
