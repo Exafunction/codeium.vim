@@ -20,7 +20,7 @@ function! s:Uuid() abort
   throw 'Could not generate uuid. Please make sure uuidgen is installed.'
 endfunction
 
-function! s:XdgConfigDir() abort
+function! codeium#command#XdgConfigDir() abort
   let config_dir = $XDG_CONFIG_HOME
   if empty(config_dir)
     let config_dir = $HOME . '/.config'
@@ -32,7 +32,7 @@ function! codeium#command#HomeDir() abort
   return $HOME . '/.codeium'
 endfunction
 
-function! s:LoadConfig(dir) abort
+function! codeium#command#LoadConfig(dir) abort
   let config_path = a:dir . '/config.json'
   if filereadable(config_path)
     let contents = join(readfile(config_path), '')
@@ -44,7 +44,7 @@ function! s:LoadConfig(dir) abort
   return {}
 endfunction
 
-let s:api_key = get(s:LoadConfig(codeium#command#HomeDir()), 'apiKey', '')
+let s:api_key = get(codeium#command#LoadConfig(codeium#command#HomeDir()), 'apiKey', '')
 
 let s:commands = {}
 
@@ -106,7 +106,7 @@ function! s:commands.Auth(...) abort
     let s:api_key = api_key
     let config_dir = codeium#command#HomeDir()
     let config_path = config_dir . '/config.json'
-    let config = s:LoadConfig(config_dir)
+    let config = codeium#command#LoadConfig(config_dir)
     let config.apiKey = api_key
 
     try
