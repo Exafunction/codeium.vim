@@ -44,10 +44,12 @@ function! codeium#Accept() abort
   let current_completion = s:GetCurrentCompletionItem()
   if current_completion isnot v:null
     let range = current_completion.range
-    let start_offset = get(range, 'startOffset', 0)
-    let end_offset = get(range, 'endOffset', 0)
-    let [start_row, start_col] = codeium#util#OffsetToPosition(start_offset)
-    let [end_row, end_col] = codeium#util#OffsetToPosition(end_offset)
+    let start_position = get(range, 'startPosition', {})
+    let end_position = get(range, 'endPosition', {})
+    let start_row = get(start_position, 'row', 0) + 1
+    let start_col = get(start_position, 'col', 0) + 1
+    let end_row = get(end_position, 'row', 0) + 1
+    let end_col = get(end_position, 'col', 0) + 1
     let suffix = get(current_completion, 'suffix', {})
     let suffix_text = get(suffix, 'text', '')
     let delta = get(suffix, 'deltaCursorOffset', 0)
@@ -76,7 +78,7 @@ function! codeium#Accept() abort
     if delta == 0
       let cursor_text = ''
     else
-      let cursor_text = "\<C-O>:call call('cursor', codeium#util#OffsetToPosition(codeium#util#PositionToOffset('.', '.') + (" . delta . ")))\<CR>"
+      let cursor_text = "\<C-O>:exe 'go' line2byte(line('.'))+col('.')-1+(" . delta . ")\<CR>"
     endif
     call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
     return delete_text . insert_text . cursor_text
@@ -302,6 +304,11 @@ function! codeium#Complete(...) abort
   endif
 
   if !codeium#Enabled()
+    return
+  endif
+
+  if &encoding !=# 'latin1' && &encoding !=# 'utf-8'
+    echoerr 'Only latin1 and utf-8 are supported'
     return
   endif
 
