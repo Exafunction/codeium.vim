@@ -37,7 +37,7 @@ endfunction
 
 function! codeium#Accept() abort
   if mode() !~# '^[iR]' || !exists('b:_codeium_completions')
-    return ''
+    return "\t"
   endif
   let default = get(g:, 'codeium_tab_fallback', pumvisible() ? "\<C-N>" : "\t")
 
@@ -377,3 +377,4 @@ function! codeium#GetStatusString(...) abort
   endif
   return '   '
 endfunction
+
