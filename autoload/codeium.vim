@@ -377,4 +377,3 @@ function! codeium#GetStatusString(...) abort
   endif
   return '   '
 endfunction
-
