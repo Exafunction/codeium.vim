@@ -229,6 +229,15 @@ function! s:RenderCurrentCompletion() abort
         endif
 
         for line in text
+          let num_leading_tabs = 0
+          for c in split(line, '\zs')
+            if c ==# "\t"
+              let num_leading_tabs += 1
+            else
+              break
+            endif
+          endfor
+          let line = repeat(' ', num_leading_tabs * shiftwidth()) . strpart(line, num_leading_tabs)
           call prop_add(row, 0, {'type': s:hlgroup, 'text_align': 'below', 'text': line})
         endfor
       endif
