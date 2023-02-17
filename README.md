@@ -76,7 +76,7 @@ If you'd like to bind the actions above to different keys, this might look somet
 
 
 ```vim
-imap <C-g>   <Cmd>call codeium#Accept()<CR>
+imap <script><silent><nowait><expr> <C-g> codeium#Accept()
 imap <C-;>   <Cmd>call codeium#CycleCompletions(1)<CR>
 imap <C-,>   <Cmd>call codeium#CycleCompletions(-1)<CR>
 imap <C-x>   <Cmd>call codeium#Clear()<CR>
