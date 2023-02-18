@@ -355,6 +355,9 @@ endfunction
 
 function! codeium#DebouncedComplete(...) abort
   call codeium#Clear(v:false)
+  if get(g:, 'codeium_manual', v:false)
+    return
+  endif
   let current_buf = bufnr('')
   let delay = get(g:, 'codeium_idle_delay', 75)
   let g:_codeium_timer = timer_start(delay, function('codeium#Complete', [current_buf]))
