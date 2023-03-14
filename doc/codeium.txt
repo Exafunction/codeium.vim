@@ -23,7 +23,7 @@ COMMANDS                                        *:Codeium*
 :Codeium DisableBuffer  Disable Codeium completions in the current buffer only.
 
                                                 *:Codeium_EnableBuffer*
-:Codeium EnableBuffer   Re-eisable Codeium completions in the current
+:Codeium EnableBuffer   Re-enable Codeium completions in the current
                         buffer after running :Codeium DisableBuffer
 
 
