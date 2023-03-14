@@ -60,10 +60,10 @@ function! codeium#Accept() abort
   
   let delete_range = ""
   if end_offset - start_offset > 0
-    let delete_range = " \<Esc>x0d" . (end_offset - start_offset) . "l"
+    let delete_range = " \<Esc>x0d" . (end_offset - start_offset) . "li"
   endif
 
-  let insert_text = "i\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
+  let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
   let s:completion_text = text
 
   if delta == 0
