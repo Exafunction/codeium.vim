@@ -15,7 +15,7 @@ let s:default_codeium_enabled = {
 
 function! codeium#Enabled() abort
   if !get(g:, 'codeium_enabled', v:true) || !get(b:, 'codeium_enabled', v:true)
-      return v:false
+    return v:false
   endif
 
   let codeium_filetypes = s:default_codeium_enabled
@@ -42,49 +42,40 @@ function! codeium#Accept() abort
   let default = get(g:, 'codeium_tab_fallback', pumvisible() ? "\<C-N>" : "\t")
 
   let current_completion = s:GetCurrentCompletionItem()
-  if current_completion isnot v:null
-    let range = current_completion.range
-    let start_position = get(range, 'startPosition', {})
-    let end_position = get(range, 'endPosition', {})
-    let start_row = get(start_position, 'row', 0) + 1
-    let start_col = get(start_position, 'col', 0) + 1
-    let end_row = get(end_position, 'row', 0) + 1
-    let end_col = get(end_position, 'col', 0) + 1
-    let suffix = get(current_completion, 'suffix', {})
-    let suffix_text = get(suffix, 'text', '')
-    let delta = get(suffix, 'deltaCursorOffset', 0)
-
-    let text = current_completion.completion.text . suffix_text
-    if empty(text)
-      return default
-    endif
-
-    let s:completion_text = text
-
-    let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
-    let move_to_start = "\<C-O>:call cursor(" . start_row . ',' . start_col . ")\<CR>"
-    let move_to_end = "\<C-O>:call cursor(" . end_row . ',' . end_col . ")\<CR>"
-
-    let delete_text = move_to_start
-    if start_row == end_row
-      if end_col > start_col
-        let delete_text = move_to_start . "\<C-O>d" . (end_col - start_col) . 'l'
-      endif
-    else
-      " Delete last line, then intermediate lines.
-      let delete_text = move_to_end . "\<C-O>d0" . move_to_start . repeat("\<C-O>DJ", end_row - start_row) . "\<C-O>dl"
-    endif
-
-    if delta == 0
-      let cursor_text = ''
-    else
-      let cursor_text = "\<C-O>:exe 'go' line2byte(line('.'))+col('.')-1+(" . delta . ")\<CR>"
-    endif
-    call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
-    return delete_text . insert_text . cursor_text
+  if current_completion is v:null
+    return default
   endif
 
-  return default
+  let range = current_completion.range
+  let suffix = get(current_completion, 'suffix', {})
+  let suffix_text = get(suffix, 'text', '')
+  let delta = get(suffix, 'deltaCursorOffset', 0)
+  let start_offset = get(range, 'startOffset', 0)
+  let end_offset = get(range, 'endOffset', 0)
+
+  let text = current_completion.completion.text . suffix_text
+  if empty(text)
+    return default
+  endif
+  
+  let delete_range = ''
+  if end_offset - start_offset > 0
+      " We insert a space, escape to normal mode, then delete the inserted space.
+      " This lets us "accept" any auto-inserted indentation which is otherwise
+      " removed when we switch to normal mode.
+    let delete_range = ' \<Esc>x0d' . (end_offset - start_offset) . 'li'
+  endif
+
+  let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
+  let s:completion_text = text
+
+  if delta == 0
+    let cursor_text = ''
+  else
+    let cursor_text = "\<C-O>:exe 'go' line2byte(line('.'))+col('.')+(" . delta . ")\<CR>"
+  endif
+  call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
+  return delete_range . insert_text . cursor_text
 endfunction
 
 function! s:HandleCompletionsResult(out, status) abort
@@ -373,8 +364,8 @@ function! codeium#GetStatusString(...) abort
   if exists('b:_codeium_status') && b:_codeium_status > 0
     if b:_codeium_status == 2
       if exists('b:_codeium_completions') &&
-          \ has_key(b:_codeium_completions, 'items') &&
-          \ has_key(b:_codeium_completions, 'index')
+            \ has_key(b:_codeium_completions, 'items') &&
+            \ has_key(b:_codeium_completions, 'index')
         if len(b:_codeium_completions.items) > 0
           return printf('%d/%d', b:_codeium_completions.index + 1, len(b:_codeium_completions.items))
         else
