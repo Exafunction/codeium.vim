@@ -50,17 +50,20 @@ function! codeium#Accept() abort
   let suffix = get(current_completion, 'suffix', {})
   let suffix_text = get(suffix, 'text', '')
   let delta = get(suffix, 'deltaCursorOffset', 0)
-  let start_offset = get(range, "startOffset", 0)
-  let end_offset = get(range, "endOffset", 0)
+  let start_offset = get(range, 'startOffset', 0)
+  let end_offset = get(range, 'endOffset', 0)
 
   let text = current_completion.completion.text . suffix_text
   if empty(text)
     return default
   endif
   
-  let delete_range = ""
+  let delete_range = ''
   if end_offset - start_offset > 0
-    let delete_range = " \<Esc>x0d" . (end_offset - start_offset) . "li"
+      " We insert a space, escape to normal mode, then delete the inserted space.
+      " This lets us "accept" any auto-inserted indentation which is otherwise
+      " removed when we switch to normal mode.
+    let delete_range = ' \<Esc>x0d' . (end_offset - start_offset) . 'li'
   endif
 
   let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
