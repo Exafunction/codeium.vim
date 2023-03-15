@@ -39,6 +39,7 @@ augroup END
 
 imap <Plug>(codeium-dismiss)     <Cmd>call codeium#Clear()<CR>
 imap <Plug>(codeium-next)     <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <Plug>(codeium-next-or-complete)     <Cmd>call codeium#CycleOrComplete()<CR>
 imap <Plug>(codeium-previous) <Cmd>call codeium#CycleCompletions(-1)<CR>
 imap <Plug>(codeium-complete)  <Cmd>call codeium#Complete()<CR>
 
@@ -47,7 +48,7 @@ if !get(g:, 'codeium_disable_bindings')
     imap <silent><script><nowait><expr> <C-]> codeium#Clear() . "\<C-]>"
   endif
   if empty(mapcheck('<M-]>', 'i'))
-    imap <M-]> <Plug>(codeium-next)
+    imap <M-]> <Plug>(codeium-next-or-complete)
   endif
   if empty(mapcheck('<M-[>', 'i'))
     imap <M-[> <Plug>(codeium-previous)
