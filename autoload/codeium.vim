@@ -57,7 +57,7 @@ function! codeium#Accept() abort
   if empty(text)
     return default
   endif
-  
+
   let delete_range = ''
   if end_offset - start_offset > 0
       " We insert a space, escape to normal mode, then delete the inserted space.
@@ -338,7 +338,6 @@ function! codeium#Complete(...) abort
           \ 'request_id': request_id,
           \ 'job': request_job
           \ }
-    redrawstatus
   catch
     call codeium#log#Exception()
   endtry
