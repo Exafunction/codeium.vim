@@ -353,6 +353,14 @@ function! codeium#DebouncedComplete(...) abort
   let g:_codeium_timer = timer_start(delay, function('codeium#Complete', [current_buf]))
 endfunction
 
+function! codeium#CycleOrComplete() abort
+  if s:GetCurrentCompletionItem() is v:null
+    call codeium#Complete()
+  else
+    call codeium#CycleCompletions(1)
+  endif
+endfunction
+
 function! codeium#GetStatusString(...) abort
   if (!codeium#Enabled())
     return 'OFF'
