@@ -312,10 +312,20 @@ function! codeium#Complete(...) abort
     return
   endif
 
+  let other_documents = []
+  let current_bufnr = bufnr('%')
+  let loaded_buffers = getbufinfo({'bufloaded':1})
+  for buf in loaded_buffers
+    if buf.bufnr != current_bufnr && getbufvar(buf.bufnr, '&filetype') !=# ''
+      call add(other_documents, codeium#doc#GetDocument(buf.bufnr, 1, 1))
+    endif
+  endfor
+
   let data = {
         \ 'metadata': codeium#server#RequestMetadata(),
-        \ 'document': codeium#doc#GetCurrentDocument(),
-        \ 'editor_options': codeium#doc#GetEditorOptions()
+        \ 'document': codeium#doc#GetDocument(bufnr(), line('.'), col('.')),
+        \ 'editor_options': codeium#doc#GetEditorOptions(),
+        \ 'other_documents': other_documents
         \ }
 
   if exists('b:_codeium_completions.request_data') && b:_codeium_completions.request_data ==# data
