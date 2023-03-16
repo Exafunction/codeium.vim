@@ -65,3 +65,32 @@ let s:dir = expand('<sfile>:h:h')
 if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
   silent! execute 'helptags' fnameescape(s:dir . '/doc')
 endif
+
+function! CodeiumEnable()  " Enable Codeium if it is disabled
+  let g:codeium_enabled = v:true
+endfun
+
+command! CodeiumEnable :silent! call CodeiumEnable()
+
+function! CodeiumDisable() " Disable Codeium altogether
+  let g:codeium_enabled = v:false
+endfun
+
+command! CodeiumDisable :silent! call CodeiumDisable()
+
+function! CodeiumManual() " Disable the automatic triggering of completions
+  let g:codeium_manual = v:true
+endfun
+
+command! CodeiumManual :silent! call CodeiumManual()
+
+function! CodeiumAuto()  " Enable the automatic triggering of completions
+  let g:codeium_manual = v:false
+endfun
+
+command! CodeiumAuto :silent! call CodeiumAuto()
+
+:amenu Plugin.Codeium.Enable\ \Codeium\ \(\:CodeiumEnable\) :call CodeiumEnable() <Esc>
+:amenu Plugin.Codeium.Disable\ \Codeium\ \(\:CodeiumDisable\) :call CodeiumDisable() <Esc>
+:amenu Plugin.Codeium.Manual\ \Codeium\ \AI\ \Autocompletion\ \(\:CodeiumManual\) :call CodeiumManual() <Esc>
+:amenu Plugin.Codeium.Automatic\ \Codeium\ \AI\ \Completion\ \(\:CodeiumAuto\) :call CodeiumAuto() <Esc>
