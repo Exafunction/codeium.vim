@@ -69,20 +69,22 @@ let s:filetype_aliases = {
       \ 'text': 'plaintext',
       \ }
 
-function! codeium#doc#GetCurrentDocument() abort
-  let lines = getline(1, '$')
-  if &endofline
+function! codeium#doc#GetDocument(bufId, curLine, curCol) abort
+  let lines = getbufline(a:bufId, 1, '$')
+  if getbufvar(a:bufId, '&endofline')
     call add(lines, '')
   endif
 
-  let filetype = substitute(&filetype, '\..*', '', '')
+  let filetype = substitute(getbufvar(a:bufId, '&filetype'), '\..*', '', '')
   let language = get(s:filetype_aliases, empty(filetype) ? 'text' : filetype, filetype)
 
   let doc = {
         \ 'text': join(lines, codeium#util#LineEndingChars()),
-        \ 'editor_language': &filetype,
+        \ 'editor_language': getbufvar(a:bufId, '&filetype'),
         \ 'language': get(s:language_enum, language, 0),
-        \ 'cursor_position': {'row': line('.') - 1, 'col': col('.') - 1},
+        \ 'cursor_position': {'row': a:curLine - 1, 'col': a:curCol - 1},
+        \ 'absolute_path': fnamemodify(bufname(a:bufId), ':p'),
+        \ 'relative_path': fnamemodify(bufname(a:bufId), ':')
         \ }
 
   let line_ending = codeium#util#LineEndingChars(v:null)
