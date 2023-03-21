@@ -1,5 +1,6 @@
 let s:hlgroup = 'CodeiumSuggestion'
 let s:request_nonce = 0
+let s:using_codeium_status = 0
 
 if !has('nvim')
   if empty(prop_type_get(s:hlgroup))
@@ -124,7 +125,7 @@ endfunction
 
 function! s:RenderCurrentCompletion() abort
   call s:ClearCompletion()
-  redrawstatus
+  call codeium#RedrawStatusLine()
 
   if mode() !~# '^[iR]' || (v:false && pumvisible())
     return ''
@@ -240,7 +241,7 @@ endfunction
 
 function! codeium#Clear(...) abort
   let b:_codeium_status = 0
-  redrawstatus
+  call codeium#RedrawStatusLine()
   if exists('g:_codeium_timer')
     call timer_stop(remove(g:, '_codeium_timer'))
   endif
@@ -372,6 +373,7 @@ function! codeium#CycleOrComplete() abort
 endfunction
 
 function! codeium#GetStatusString(...) abort
+  let s:using_codeium_status = 1
   if (!codeium#Enabled())
     return 'OFF'
   endif
@@ -396,4 +398,10 @@ function! codeium#GetStatusString(...) abort
     return ' 0 '
   endif
   return '   '
+endfunction
+
+function! codeium#RedrawStatusLine() abort
+  if s:using_codeium_status
+    redrawstatus
+  endif
 endfunction
