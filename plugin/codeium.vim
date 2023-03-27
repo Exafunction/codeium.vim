@@ -34,6 +34,7 @@ augroup codeium
   autocmd ColorScheme,VimEnter * call s:SetStyle()
   " Map tab using vim enter so it occurs after all other sourcing.
   autocmd VimEnter             * call s:MapTab()
+  autocmd VimLeave             * call codeium#ServerLeave()
 augroup END
 
 
