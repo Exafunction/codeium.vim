@@ -407,13 +407,13 @@ function! codeium#RedrawStatusLine() abort
 endfunction
 
 function! codeium#ServerLeave() abort
-  if s:server_job is v:null
+  if g:codeium_server_job is v:null
     return
   endif
 
   if has('nvim')
-    call jobstop(s:server_job)
+    call jobstop(g:codeium_server_job)
   else
-    call job_stop(s:server_job)
+    call job_stop(g:codeium_server_job)
   endif
 endfunction
