@@ -25,7 +25,7 @@ if !exists('s:editor_version')
 endif
 
 let s:server_port = v:null
-let s:server_job = v:null
+let g:codeium_server_job = v:null
 
 function! s:OnExit(result, status, on_complete_cb) abort
   let did_close = has_key(a:result, 'closed')
@@ -205,11 +205,11 @@ function! s:ActuallyStart() abort
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
-    let s:server_job = jobstart(args, {
+    let g:codeium_server_job = jobstart(args, {
                 \ 'on_stderr': { channel, data, t -> codeium#log#Info('[SERVER] ' . join(data, "\n")) },
                 \ })
   else
-    let s:server_job = job_start(args, {
+    let g:codeium_server_job = job_start(args, {
                 \ 'out_mode': 'raw',
                 \ 'err_cb': { channel, data -> codeium#log#Info('[SERVER] ' . data) },
                 \ })
