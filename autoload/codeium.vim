@@ -127,7 +127,7 @@ function! s:RenderCurrentCompletion() abort
   call s:ClearCompletion()
   call codeium#RedrawStatusLine()
 
-  if mode() !~# '^[iR]' || (v:false && pumvisible())
+  if mode() !~# '^[iR]'
     return ''
   endif
   let current_completion = s:GetCurrentCompletionItem()
