@@ -407,7 +407,7 @@ function! codeium#RedrawStatusLine() abort
 endfunction
 
 function! codeium#ServerLeave() abort
-  if g:codeium_server_job is v:null
+  if !get(g: ,'codeium_server_job')
     return
   endif
 
