@@ -61,10 +61,17 @@ endif
 
 call s:SetStyle()
 
+" Run codeium server if not already started
+" FIXME: share this with command.vim
+function! s:start_language_server()
+  if !get(g:, 'codeium_server_started', v:false)
+    call timer_start(0, function('codeium#server#Start'))
+    let g:codeium_server_started = v:true
+  endif
+endfunction
+
 if g:codeium_enabled
-  call timer_start(0, function('codeium#server#Start'))
-  " Make sure to start codeium server only once
-  let g:codeium_server_started = true
+  call s:start_language_server()
 endif
 
 let s:dir = expand('<sfile>:h:h')
@@ -74,11 +81,7 @@ endif
 
 function! CodeiumEnable()  " Enable Codeium if it is disabled
   let g:codeium_enabled = v:true
-  if !get(g:, 'codeium_server_started', v:false)
-    call timer_start(0, function('codeium#server#Start'))
-    " Make sure to start codeium server only once
-    let g:codeium_server_started = true
-  endif
+  call s:start_language_server()
 endfun
 
 command! CodeiumEnable :silent! call CodeiumEnable()
