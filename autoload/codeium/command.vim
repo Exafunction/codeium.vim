@@ -166,4 +166,3 @@ function! codeium#command#Command(arg) abort
     return ''
   endif
 endfunction
-
