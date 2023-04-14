@@ -126,9 +126,8 @@ function! s:commands.DisableBuffer(...) abort
   let b:codeium_enabled = 0
 endfunction
 
-" Run codeium server if not already started
-" FIXME: share this with codeium.vim
-function! s:start_language_server()
+" Run codeium server only if its not already started
+function! codeium#command#StartLanguageServer() abort
   if !get(g:, 'codeium_server_started', v:false)
     call timer_start(0, function('codeium#server#Start'))
     let g:codeium_server_started = v:true
@@ -137,12 +136,12 @@ endfunction
 
 function! s:commands.Enable(...) abort
   let g:codeium_enabled = 1
-  call s:start_language_server()
+  call codeium#command#StartLanguageServer()
 endfunction
 
 function! s:commands.EnableBuffer(...) abort
   let b:codeium_enabled = 1
-  call s:start_language_server()
+  call codeium#command#StartLanguageServer()
 endfunction
 
 function! codeium#command#ApiKey() abort
@@ -167,3 +166,4 @@ function! codeium#command#Command(arg) abort
     return ''
   endif
 endfunction
+
