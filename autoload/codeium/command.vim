@@ -28,8 +28,18 @@ function! codeium#command#XdgConfigDir() abort
   return config_dir . '/codeium'
 endfunction
 
-function! codeium#command#HomeDir() abort
-  return $HOME . '/.codeium'
+" function! codeium#command#HomeDir() abort
+"   return $HOME . '/.codeium'
+" endfunction
+
+function! codeium#command#XdgDataDir() abort
+  let data_dir = $XDG_DATA_HOME
+  if empty(data_dir)
+    let data_dir = $HOME . '/.codeium'
+  else
+    let data_dir = data_dir . '/codeium'
+  endif
+  return data_dir
 endfunction
 
 function! codeium#command#LoadConfig(dir) abort
@@ -44,7 +54,7 @@ function! codeium#command#LoadConfig(dir) abort
   return {}
 endfunction
 
-let s:api_key = get(codeium#command#LoadConfig(codeium#command#HomeDir()), 'apiKey', '')
+let s:api_key = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'apiKey', '')
 
 let s:commands = {}
 
@@ -104,7 +114,7 @@ function! s:commands.Auth(...) abort
 
   if !empty(api_key)
     let s:api_key = api_key
-    let config_dir = codeium#command#HomeDir()
+    let config_dir = codeium#command#XdgConfigDir()
     let config_path = config_dir . '/config.json'
     let config = codeium#command#LoadConfig(config_dir)
     let config.apiKey = api_key

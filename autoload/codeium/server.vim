@@ -137,7 +137,7 @@ function! codeium#server#Start(...) abort
   endif
 
   let sha = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'sha', s:language_server_sha)
-  let bin_dir = codeium#command#HomeDir() . '/bin/' . sha
+  let bin_dir = codeium#command#XdgDataDir() . '/bin/' . sha
   let s:bin = bin_dir . '/language_server_' . bin_suffix
   call mkdir(bin_dir, 'p')
 
