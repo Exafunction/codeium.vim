@@ -28,11 +28,7 @@ function! codeium#command#XdgConfigDir() abort
   return config_dir . '/codeium'
 endfunction
 
-" function! codeium#command#HomeDir() abort
-"   return $HOME . '/.codeium'
-" endfunction
-
-function! codeium#command#XdgDataDir() abort
+function! codeium#command#HomeDir() abort
   let data_dir = $XDG_DATA_HOME
   if empty(data_dir)
     let data_dir = $HOME . '/.codeium'
