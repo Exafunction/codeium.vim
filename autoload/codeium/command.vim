@@ -33,7 +33,7 @@ function! codeium#command#HomeDir() abort
   if empty(data_dir)
     let data_dir = $HOME . '/.codeium'
   else
-    let data_dir = data_dir . '/codeium'
+    let data_dir = data_dir . '/.codeium'
   endif
   return data_dir
 endfunction
