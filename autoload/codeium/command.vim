@@ -115,12 +115,22 @@ function! s:commands.DisableBuffer(...) abort
   let b:codeium_enabled = 0
 endfunction
 
+" Run codeium server only if its not already started
+function! codeium#command#StartLanguageServer() abort
+  if !get(g:, 'codeium_server_started', v:false)
+    call timer_start(0, function('codeium#server#Start'))
+    let g:codeium_server_started = v:true
+  endif
+endfunction
+
 function! s:commands.Enable(...) abort
   let g:codeium_enabled = 1
+  call codeium#command#StartLanguageServer()
 endfunction
 
 function! s:commands.EnableBuffer(...) abort
   let b:codeium_enabled = 1
+  call codeium#command#StartLanguageServer()
 endfunction
 
 function! codeium#command#ApiKey() abort
