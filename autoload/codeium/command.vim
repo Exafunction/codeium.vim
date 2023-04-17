@@ -50,7 +50,7 @@ function! codeium#command#LoadConfig(dir) abort
   return {}
 endfunction
 
-let s:api_key = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'apiKey', '')
+let s:api_key = get(codeium#command#LoadConfig(codeium#command#HomeDir()), 'apiKey', '')
 
 let s:commands = {}
 
