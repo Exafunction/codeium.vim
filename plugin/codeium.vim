@@ -61,7 +61,7 @@ endif
 
 call s:SetStyle()
 
-if g:codeium_enabled
+if codeium#Enabled()
   call codeium#command#StartLanguageServer()
 endif
 

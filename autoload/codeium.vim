@@ -15,7 +15,7 @@ let s:default_codeium_enabled = {
       \ '.': 0}
 
 function! codeium#Enabled() abort
-  if !get(g:, 'codeium_enabled', v:true) || !get(b:, 'codeium_enabled', v:true)
+  if !get(g:, 'codeium_enabled', v:true)
     return v:false
   endif
 
