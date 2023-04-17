@@ -60,7 +60,10 @@ if !get(g:, 'codeium_disable_bindings')
 endif
 
 call s:SetStyle()
-call timer_start(0, function('codeium#server#Start'))
+
+if codeium#Enabled()
+  call codeium#command#StartLanguageServer()
+endif
 
 let s:dir = expand('<sfile>:h:h')
 if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
@@ -69,6 +72,7 @@ endif
 
 function! CodeiumEnable()  " Enable Codeium if it is disabled
   let g:codeium_enabled = v:true
+  call codeium#command#StartLanguageServer()
 endfun
 
 command! CodeiumEnable :silent! call CodeiumEnable()
