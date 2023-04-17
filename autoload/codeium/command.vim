@@ -10,16 +10,6 @@ function! codeium#command#BrowserCommand() abort
   endif
 endfunction
 
-function! s:Uuid() abort
-  if has('win32')
-    return system('powershell -Command "[guid]::NewGuid().Guid"')
-  elseif executable('uuidgen')
-    return system('uuidgen')
-  endif
-
-  throw 'Could not generate uuid. Please make sure uuidgen is installed.'
-endfunction
-
 function! codeium#command#XdgConfigDir() abort
   let config_dir = $XDG_CONFIG_HOME
   if empty(config_dir)
@@ -59,8 +49,7 @@ function! s:commands.Auth(...) abort
     return
   endif
 
-  let uuid = trim(s:Uuid())
-  let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=vim-show-auth-token&state=' . uuid . '&scope=openid%20profile%20email&redirect_parameters_type=query'
+  let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=vim-show-auth-token&state=a&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
