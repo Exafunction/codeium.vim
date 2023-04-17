@@ -110,7 +110,7 @@ function! s:commands.Auth(...) abort
 
   if !empty(api_key)
     let s:api_key = api_key
-    let config_dir = codeium#command#XdgConfigDir()
+    let config_dir = codeium#command#HomeDir()
     let config_path = config_dir . '/config.json'
     let config = codeium#command#LoadConfig(config_dir)
     let config.apiKey = api_key
