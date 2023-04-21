@@ -141,7 +141,7 @@ endfunction
 
 function! codeium#command#ApiKey() abort
   if s:api_key == ''
-    echom 'Codeium: No api key found, maybe you need to run CodeiumAuth'
+    echom 'Codeium: No api key found, maybe you need to run `:Codeium Auth`'
   endif
   return s:api_key
 endfunction
