@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.3'
-let s:language_server_sha = '6379f8f8e084ec1f419e2dccd70fa7b841fbc66b'
+let s:language_server_version = '1.2.11'
+let s:language_server_sha = 'b43caa7661bde4411c6c11d3b938890bc1ea0d08'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -141,7 +141,8 @@ function! codeium#server#Start(...) abort
   let s:bin = bin_dir . '/language_server_' . bin_suffix
   call mkdir(bin_dir, 'p')
 
-  if empty(glob(s:bin))
+  if !filereadable(s:bin)
+    call delete(s:bin)
     if sha ==# s:language_server_sha
       let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
     else
@@ -184,7 +185,7 @@ function! s:UnzipAndStart(status) abort
     call system('gzip -d ' . s:bin . '.gz')
     call system('chmod +x ' . s:bin)
   endif
-  if empty(glob(s:bin))
+  if !filereadable(s:bin)
     call codeium#log#Error('Failed to download language server binary.')
     return ''
   endif
