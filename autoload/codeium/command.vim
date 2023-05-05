@@ -55,7 +55,10 @@ function! s:commands.Auth(...) abort
     return
   endif
 
-  let url = 'https://www.codeium.com/profile?response_type=token&redirect_uri=vim-show-auth-token&state=a&scope=openid%20profile%20email&redirect_parameters_type=query'
+  let config = get(g:, 'codeium_server_config', {})
+  let portal_url = get(config, 'portal_url', 'https://www.codeium.com')
+
+  let url = portal_url . '/profile?response_type=token&redirect_uri=vim-show-auth-token&state=a&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
@@ -81,8 +84,14 @@ function! s:commands.Auth(...) abort
   call inputrestore()
   let tries = 0
 
+  if has_key(config, 'api_url') && !empty(config.api_url)
+    let register_user_url = config.api_url . '/exa.api_server_pb.ApiServerService/RegisterUser'
+  else
+    let register_user_url = 'https://api.codeium.com/register_user/'
+  endif
+
   while empty(api_key) && tries < 3
-    let command = 'curl -sS https://api.codeium.com/register_user/ ' .
+    let command = 'curl -sS ' . register_user_url . ' ' .
           \ '--header "Content-Type: application/json" ' .
           \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
     let response = system(command)
@@ -141,7 +150,7 @@ endfunction
 
 function! codeium#command#ApiKey() abort
   if s:api_key == ''
-    echom 'Codeium: No API key found; maybe you need to run `:Codeium Auth`'?
+    echom 'Codeium: No API key found; maybe you need to run `:Codeium Auth`?'
   endif
   return s:api_key
 endfunction
