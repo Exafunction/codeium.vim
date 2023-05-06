@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.11'
-let s:language_server_sha = 'b43caa7661bde4411c6c11d3b938890bc1ea0d08'
+let s:language_server_version = '1.2.15'
+let s:language_server_sha = '97eaf03fbdd9775b36d5509ab62ea8ad64becc9c'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -199,8 +199,7 @@ function! s:ActuallyStart() abort
 
   let args = [
         \ s:bin,
-        \ '--api_server_host', get(config, 'api_host', 'server.codeium.com'),
-        \ '--api_server_port', get(config, 'api_port', '443'),
+        \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
         \ '--manager_dir', manager_dir
         \ ]
 
