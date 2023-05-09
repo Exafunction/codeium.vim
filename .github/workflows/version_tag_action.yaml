@@ -12,4 +12,4 @@ jobs:
         id: version
         run: echo ::set-output name=version::$(grep -oP "(?<=s:language_server_version = ')[^']+" autoload/codeium/server.vim)
       - name: Add tag to commit
-        run: git tag ${{ steps.version.outputs.version }}
+        run: git tag ${{ steps.version.outputs.version }} && git push origin ${{ steps.version.outputs.version }}
