@@ -1,6 +1,9 @@
 name: Add Version Tag
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -11,5 +14,14 @@ jobs:
       - name: Get version from file
         id: version
         run: echo ::set-output name=version::$(grep -oP "(?<=s:language_server_version = ')[^']+" autoload/codeium/server.vim)
-      - name: Add tag to commit
-        run: git tag ${{ steps.version.outputs.version }} && git push origin ${{ steps.version.outputs.version }}
+      - name: Check if tag exists
+        id: add_tag
+        run: |
+          if git rev-parse ${{ steps.version.outputs.version }} >/dev/null 2>&1; then
+            echo "Tag already exists"
+            exit 0
+          else
+            echo "Tag doesn't exist"
+            git tag ${{ steps.version.outputs.version }} && git push origin ${{ steps.version.outputs.version }}
+          fi
+        shell: bash
