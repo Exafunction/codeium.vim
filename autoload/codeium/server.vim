@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.104'
-let s:language_server_sha = 'ab59278dfa738977096f6bfc2299d9941fcc3252'
+let s:language_server_version = '1.2.16'
+let s:language_server_sha = 'c86f5b9a7325c7bbd495cc1ad8a12524cad0b4ca'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -120,8 +120,8 @@ function! s:SendHeartbeat(timer) abort
 endfunction
 
 function! codeium#server#Start(...) abort
-  silent let os = substitute(system('uname'), '\n', '', '')
-  silent let arch = substitute(system('uname -m'), '\n', '', '')
+  let os = substitute(system('uname'), '\n', '', '')
+  let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
   if os ==# 'Linux' && is_arm
@@ -182,10 +182,6 @@ function! s:UnzipAndStart(status) abort
     let &shellcmdflag = old_shellcmdflag
     let &shellredir = old_shellredir
   else
-    if !executable('gzip')
-      call codeium#log#Error('Failed to extract language server binary: missing `gzip`.')
-      return ''
-    endif
     call system('gzip -d ' . s:bin . '.gz')
     call system('chmod +x ' . s:bin)
   endif
@@ -206,9 +202,6 @@ function! s:ActuallyStart() abort
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
         \ '--manager_dir', manager_dir
         \ ]
-  if has_key(config, 'api_url') && !empty(config.api_url)
-    let args += ['--enterprise_mode']
-  endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
