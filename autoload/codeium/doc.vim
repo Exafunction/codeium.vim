@@ -21,6 +21,7 @@ let s:language_enum = {
       \ 'julia': 19,
       \ 'kotlin': 20,
       \ 'latex': 21,
+      \ 'tex': 21,
       \ 'less': 22,
       \ 'lua': 23,
       \ 'makefile': 24,
@@ -51,6 +52,19 @@ let s:language_enum = {
       \ 'xsl': 49,
       \ 'yaml': 50,
       \ 'svelte': 51,
+      \ 'toml': 52,
+      \ 'dart': 53,
+      \ 'rst': 54,
+      \ 'ocaml': 55,
+      \ 'cmake': 56,
+      \ 'pascal': 57,
+      \ 'elixir': 58,
+      \ 'fsharp': 59,
+      \ 'lisp': 60,
+      \ 'matlab': 61,
+      \ 'ps1': 62,
+      \ 'solidity': 63,
+      \ 'ada': 64,
       \ }
 
 let s:filetype_aliases = {
