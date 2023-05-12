@@ -355,7 +355,7 @@ function! codeium#Complete(...) abort
 endfunction
 
 function! codeium#DebouncedComplete(...) abort
-  call codeium#Clear(v:false)
+  call codeium#Clear()
   if get(g:, 'codeium_manual', v:false)
     return
   endif
