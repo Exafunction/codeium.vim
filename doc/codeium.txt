@@ -67,19 +67,6 @@ g:codeium_idle_delay    Delay in milliseconds before autocompletions are
 >
                         let g:codeium_idle_delay = 500
 <
-                                                *g:codeium_render*
-g:codeium_render        A global boolean flag that controls whether codeium
-                        renders are enabled or disabled.
->
-                        let g:codeium_render = v:false
-<
-
-                                                *g:codeium_tab_fallback*
-g:codeium_tab_fallback  The fallback key when there is no suggestion display
-                        in `codeium#Accept()`.
->
-                        let g:codeium_tab_fallback = "\t"
-<
 
 MAPS                                            *codeium-maps*
 
