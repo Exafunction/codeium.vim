@@ -61,6 +61,13 @@ g:codeium_no_map_tab    A global boolean flag that controls whether codeium
                         let g:codeium_no_map_tab = v:true
 <
 
+                                                *g:codeium_idle_delay*
+g:codeium_idle_delay    Delay in milliseconds before autocompletions are
+                        shown (limited by language server to a minimum of 75).
+>
+                        let g:codeium_idle_delay = 500
+<
+
 MAPS                                            *codeium-maps*
 
                                                 *codeium-i_<Tab>*
