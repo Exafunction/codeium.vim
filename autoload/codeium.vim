@@ -37,10 +37,11 @@ function! codeium#CompletionText() abort
 endfunction
 
 function! codeium#Accept() abort
-  if mode() !~# '^[iR]' || !exists('b:_codeium_completions')
-    return "\t"
-  endif
   let default = get(g:, 'codeium_tab_fallback', pumvisible() ? "\<C-N>" : "\t")
+
+  if mode() !~# '^[iR]' || !exists('b:_codeium_completions')
+    return default
+  endif
 
   let current_completion = s:GetCurrentCompletionItem()
   if current_completion is v:null
