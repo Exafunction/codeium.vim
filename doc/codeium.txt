@@ -74,6 +74,13 @@ g:codeium_render        A global boolean flag that controls whether codeium
                         let g:codeium_render = v:false
 <
 
+                                                *g:codeium_tab_fallback*
+g:codeium_tab_fallback  The fallback key when there is no suggestion display
+                        in `codeium#Accept()`.
+>
+                        let g:codeium_tab_fallback = "\t"
+<
+
 MAPS                                            *codeium-maps*
 
                                                 *codeium-i_<Tab>*
