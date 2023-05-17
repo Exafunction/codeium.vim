@@ -130,6 +130,10 @@ function! s:RenderCurrentCompletion() abort
   if mode() !~# '^[iR]'
     return ''
   endif
+  if !get(g:, 'codeium_render', v:true)
+    return
+  endif
+
   let current_completion = s:GetCurrentCompletionItem()
   if current_completion is v:null
     return ''
