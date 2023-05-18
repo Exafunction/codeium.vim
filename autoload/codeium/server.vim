@@ -122,7 +122,7 @@ endfunction
 function! codeium#server#Start(...) abort
   let os = substitute(system('uname'), '\n', '', '')
   let arch = substitute(system('uname -m'), '\n', '', '')
-  let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
+  let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0 || stridx(arch, 'arm64') == 0
 
   if os ==# 'Linux' && is_arm
     let bin_suffix = 'linux_arm'
