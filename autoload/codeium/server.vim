@@ -198,6 +198,7 @@ function! s:ActuallyStart() abort
   call mkdir(manager_dir, 'p')
 
   let args = [
+		\ 'steam-run',
         \ s:bin,
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
         \ '--manager_dir', manager_dir
