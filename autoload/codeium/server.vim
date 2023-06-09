@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.26'
-let s:language_server_sha = '02626b4ccb9ec6fa5d7ad27101ebb1480e2a80fb'
+let s:language_server_version = '1.2.30'
+let s:language_server_sha = '0174d45fb3f90b9934bea3943b3645989e790ffc'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -202,6 +202,9 @@ function! s:ActuallyStart() abort
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
         \ '--manager_dir', manager_dir
         \ ]
+  if has_key(config, 'api_url') && !empty(config.api_url)
+    let args += ['--enterprise_mode']
+  endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
   if has('nvim')
