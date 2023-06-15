@@ -65,6 +65,8 @@ let s:language_enum = {
       \ 'ps1': 62,
       \ 'solidity': 63,
       \ 'ada': 64,
+      \ 'blade': 84,
+      \ 'astro': 85,
       \ }
 
 let s:filetype_aliases = {
