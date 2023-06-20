@@ -57,8 +57,6 @@ function! s:commands.Auth(...) abort
 
   let config = get(g:, 'codeium_server_config', {})
   let portal_url = get(config, 'portal_url', 'https://www.codeium.com')
-  let api_url = get(config, 'api_url', '/register_user/')
-  let register_user_url = portal_url . api_url
 
   let url = portal_url . '/profile?response_type=token&redirect_uri=vim-show-auth-token&state=a&scope=openid%20profile%20email&redirect_parameters_type=query'
   let browser = codeium#command#BrowserCommand()
@@ -85,6 +83,12 @@ function! s:commands.Auth(...) abort
   let auth_token = inputsecret('Paste your token here: ')
   call inputrestore()
   let tries = 0
+
+  if has_key(config, 'api_url') && !empty(config.api_url)
+    let register_user_url = portal_url . config.api_url . '/exa.api_server_pb.ApiServerService/RegisterUser'
+  else
+    let register_user_url = 'https://api.codeium.com/register_user/'
+  endif
 
   while empty(api_key) && tries < 3
     let command = 'curl -sS ' . register_user_url . ' ' .
