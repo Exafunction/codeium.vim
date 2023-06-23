@@ -95,6 +95,21 @@ function! s:commands.Auth(...) abort
           \ '--header "Content-Type: application/json" ' .
           \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
     let response = system(command)
+    let curl_ssl_error = 'The revocation function was unable to check revocation '
+          \ . 'for the certificate.'
+    if has('win32') && response=~curl_ssl_error
+        call inputsave()
+        let useNoSsl = input('For Windows systems behind a corporate proxy there '
+              \ . 'may be trouble verifying the SSL certificates. '
+              \ . 'Would you like to try auth without checking SSL certificate revocation? (y/n): ')
+        call inputrestore()
+        if useNoSsl == 'y'
+            let command = 'curl --ssl-no-revoke -sS ' . register_user_url . ' ' .
+                  \ '--header "Content-Type: application/json" ' .
+                  \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
+            let response = system(command)
+        endif
+    endif
     let res = json_decode(response)
     let api_key = get(res, 'api_key', '')
     if empty(api_key)
