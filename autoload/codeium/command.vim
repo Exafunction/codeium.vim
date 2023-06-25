@@ -103,7 +103,7 @@ function! s:commands.Auth(...) abort
               \ . 'may be trouble verifying the SSL certificates. '
               \ . 'Would you like to try auth without checking SSL certificate revocation? (y/n): ')
         call inputrestore()
-        if useNoSsl == 'y'
+        if useNoSsl ==? 'y'
             let command = 'curl --ssl-no-revoke -sS ' . register_user_url . ' ' .
                   \ '--header "Content-Type: application/json" ' .
                   \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
