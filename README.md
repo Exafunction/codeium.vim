@@ -159,7 +159,7 @@ For vim-airline extension you can use following config:
 ### 🔌 vim-plug
 
 ```vim
-Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
+Plug 'Exafunction/codeium.vim'
 ```
 
 ### 📦 Vundle
