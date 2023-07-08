@@ -120,8 +120,8 @@ function! s:SendHeartbeat(timer) abort
 endfunction
 
 function! codeium#server#Start(...) abort
-  let os = substitute(system('uname'), '\n', '', '')
-  let arch = substitute(system('uname -m'), '\n', '', '')
+  silent let os = substitute(system('uname'), '\n', '', '')
+  silent let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
   if os ==# 'Linux' && is_arm
