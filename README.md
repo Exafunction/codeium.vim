@@ -156,6 +156,15 @@ For vim-airline extension you can use following config:
 
 ## 💾 Installation Options
 
+### 💤 Lazy
+
+```lua
+{
+  'Exafunction/codeium.vim',
+  event = 'BufEnter'
+}
+```
+
 ### 🔌 vim-plug
 
 ```vim
