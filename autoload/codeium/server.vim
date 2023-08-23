@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.71'
-let s:language_server_sha = 'd17aed0a89551f5c4b7dae98141ed0b38c422d0c'
+let s:language_server_version = '1.2.73'
+let s:language_server_sha = 'a91ad533428d075ee6d0651e4013fec7f2549ddd'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
