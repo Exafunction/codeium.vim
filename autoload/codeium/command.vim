@@ -85,7 +85,7 @@ function! s:commands.Auth(...) abort
   let tries = 0
 
   if has_key(config, 'api_url') && !empty(config.api_url)
-    let register_user_url = config.api_url . '/exa.api_server_pb.ApiServerService/RegisterUser'
+    let register_user_url = config.api_url . '/exa.seat_management_pb.SeatManagementService/RegisterUser'
   else
     let register_user_url = 'https://api.codeium.com/register_user/'
   endif
