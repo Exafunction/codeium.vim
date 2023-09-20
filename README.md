@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/1027685395649015980?label=community&color=5865F2&logo=discord&logoColor=FFFFFF)](https://discord.gg/3XFf78nAx5)
 [![Twitter Follow](https://img.shields.io/badge/style--blue?style=social&logo=twitter&label=Follow%20%40codeiumdev)](https://twitter.com/intent/follow?screen_name=codeiumdev)
 ![License](https://img.shields.io/github/license/Exafunction/codeium.vim)
-[![built with Codeium](https://codeium.com/badges/main)](https://codeium.com?repo_name=exafunction%2Fcodeium.vim)
+[![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
 [![Visual Studio](https://img.shields.io/visual-studio-marketplace/i/Codeium.codeium?label=Visual%20Studio&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=Codeium.codeium)
 [![JetBrains](https://img.shields.io/jetbrains/plugin/d/20540?label=JetBrains)](https://plugins.jetbrains.com/plugin/20540-codeium/)
@@ -116,27 +116,15 @@ let g:codeium_filetypes = {
 
 Codeium is enabled by default for most filetypes.
 
-You can also _disable_ codeium by default with the `g:codeium_enabled` variable,
-and enable it manually per buffer by running `:CodeiumEnable`:
+You can also _disable_ codeium by default with the `g:codeium_enabled`
+variable:
 
 ```vim
 let g:codeium_enabled = v:false
 ```
 
-Or you can disable codeium for _all filetypes_ with the `g:codeium_filetypes_disabled_by_default` variable,
-and use the `g:codeium_filetypes` variable to selectively enable codeium for specified filetypes:
-
-```vim
-" let g:codeium_enabled = v:true
-let g:codeium_filetypes_disabled_by_default = v:true
-
-let g:codeium_filetypes = {
-    \ "rust": v:true,
-    \ "typescript": v:true,
-    \ }
-```
-
-If you would like to just disable the automatic triggering of completions:
+Instead, if you would like to just disable the automatic triggering of
+completions:
 
 ```vim
 let g:codeium_manual = v:true
@@ -163,7 +151,9 @@ Shorter variant without Codeium logo:
 
 Please check `:help statusline` for further information about building statusline in VIM.
 
-vim-airline supports Codeium out-of-the-box since commit [3854429d](https://github.com/vim-airline/vim-airline/commit/3854429d99c8a2fb555a9837b155f33c957a2202).
+For vim-airline extension you can use following config:
+
+```let g:airline_section_y = '{…}%3{codeium#GetStatusString()}'```
 
 ## 💾 Installation Options
 
