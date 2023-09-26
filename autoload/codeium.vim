@@ -62,10 +62,12 @@ function! codeium#Accept() abort
 
   let delete_range = ''
   if end_offset - start_offset > 0
-      " We insert a space, escape to normal mode, then delete the inserted space.
-      " This lets us "accept" any auto-inserted indentation which is otherwise
-      " removed when we switch to normal mode.
-    let delete_range = " \<Esc>x0d" . (end_offset - start_offset) . 'li'
+    let delete_bytes = end_offset - start_offset
+    let delete_chars = strchars(strpart(getline('.'), 0, delete_bytes))
+    " We insert a space, escape to normal mode, then delete the inserted space.
+    " This lets us "accept" any auto-inserted indentation which is otherwise
+    " removed when we switch to normal mode.
+    let delete_range = " \<Esc>x0d" . delete_chars . 'li'
   endif
 
   let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
