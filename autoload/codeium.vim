@@ -21,11 +21,7 @@ function! codeium#Enabled() abort
 
   let codeium_filetypes = s:default_codeium_enabled
   call extend(codeium_filetypes, get(g:, 'codeium_filetypes', {}))
-  call extend(codeium_filetypes, {'': 1}) " `''` should be forced to `1`, otherwise codeium may be unable start.
-
-  let codeium_filetypes_disabled_by_default = get(g:, 'codeium_filetypes_disabled_by_default') || get(b:, 'codeium_filetypes_disabled_by_default')
-
-  if !get(codeium_filetypes, &filetype, !codeium_filetypes_disabled_by_default)
+  if !get(codeium_filetypes, &filetype, 1)
     return v:false
   endif
 
@@ -71,9 +67,7 @@ function! codeium#Accept() abort
     " We insert a space, escape to normal mode, then delete the inserted space.
     " This lets us "accept" any auto-inserted indentation which is otherwise
     " removed when we switch to normal mode.
-    " \"_ sequence makes sure to delete to the void register.
-    " This way our current yank is not overridden.
-    let delete_range = " \<Esc>\"_x0\"_d" . delete_chars . 'li'
+    let delete_range = " \<Esc>x0d" . delete_chars . 'li'
   endif
 
   let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
@@ -88,18 +82,11 @@ function! codeium#Accept() abort
   return delete_range . insert_text . cursor_text
 endfunction
 
-function! s:HandleCompletionsResult(out, err, status) abort
+function! s:HandleCompletionsResult(out, status) abort
   if exists('b:_codeium_completions')
     let response_text = join(a:out, '')
     try
       let response = json_decode(response_text)
-      if get(response, 'code', v:null) isnot# v:null
-        call codeium#log#Error('Invalid response from language server')
-        call codeium#log#Error(response_text)
-        call codeium#log#Error('stderr: ' . join(a:err, ''))
-        call codeium#log#Exception()
-        return
-      endif
       let completionItems = get(response, 'completionItems', [])
 
       let b:_codeium_completions.items = completionItems
@@ -109,8 +96,6 @@ function! s:HandleCompletionsResult(out, err, status) abort
       call s:RenderCurrentCompletion()
     catch
       call codeium#log#Error('Invalid response from language server')
-      call codeium#log#Error(response_text)
-      call codeium#log#Error('stderr: ' . join(a:err, ''))
       call codeium#log#Exception()
     endtry
   endif
