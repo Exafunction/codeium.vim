@@ -182,6 +182,10 @@ function! s:UnzipAndStart(status) abort
     let &shellcmdflag = old_shellcmdflag
     let &shellredir = old_shellredir
   else
+    if !executable('gzip')
+      call codeium#log#Error('Failed to extract language server binary: missing `gzip`.')
+      return ''
+    endif
     call system('gzip -d ' . s:bin . '.gz')
     call system('chmod +x ' . s:bin)
   endif
