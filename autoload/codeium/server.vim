@@ -1,5 +1,5 @@
-let s:language_server_version = '1.2.96'
-let s:language_server_sha = 'a9c916fcfe9b4aa015fca57e00d3a2a60e666c14'
+let s:language_server_version = '1.2.101'
+let s:language_server_sha = '87b86a22cd2aecd1294beb2346e7b5389a3873e7'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -182,10 +182,6 @@ function! s:UnzipAndStart(status) abort
     let &shellcmdflag = old_shellcmdflag
     let &shellredir = old_shellredir
   else
-    if !executable('gzip')
-      call codeium#log#Error('Failed to extract language server binary: missing `gzip`.')
-      return ''
-    endif
     call system('gzip -d ' . s:bin . '.gz')
     call system('chmod +x ' . s:bin)
   endif
