@@ -151,7 +151,9 @@ Shorter variant without Codeium logo:
 
 Please check `:help statusline` for further information about building statusline in VIM.
 
-vim-airline supports Codeium out-of-the-box since commit [3854429d](https://github.com/vim-airline/vim-airline/commit/3854429d99c8a2fb555a9837b155f33c957a2202).
+For vim-airline extension you can use following config:
+
+```let g:airline_section_y = '{…}%3{codeium#GetStatusString()}'```
 
 ## 💾 Installation Options
 
