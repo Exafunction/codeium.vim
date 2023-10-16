@@ -21,7 +21,11 @@ function! codeium#Enabled() abort
 
   let codeium_filetypes = s:default_codeium_enabled
   call extend(codeium_filetypes, get(g:, 'codeium_filetypes', {}))
-  if !get(codeium_filetypes, &filetype, 1)
+  call extend(codeium_filetypes, {'': 1}) " `''` should be forced to `1`, otherwise codeium may be unable start.
+
+  let codeium_filetypes_disabled_by_default = get(g:, 'codeium_filetypes_disabled_by_default') || get(b:, 'codeium_filetypes_disabled_by_default')
+
+  if !get(codeium_filetypes, &filetype, !codeium_filetypes_disabled_by_default)
     return v:false
   endif
 
