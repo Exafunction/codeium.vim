@@ -82,11 +82,18 @@ function! codeium#Accept() abort
   return delete_range . insert_text . cursor_text
 endfunction
 
-function! s:HandleCompletionsResult(out, status) abort
+function! s:HandleCompletionsResult(out, err, status) abort
   if exists('b:_codeium_completions')
     let response_text = join(a:out, '')
     try
       let response = json_decode(response_text)
+      if get(response, 'code', v:null) isnot# v:null
+        call codeium#log#Error('Invalid response from language server')
+        call codeium#log#Error(response_text)
+        call codeium#log#Error('stderr: ' . join(a:err, ''))
+        call codeium#log#Exception()
+        return
+      endif
       let completionItems = get(response, 'completionItems', [])
 
       let b:_codeium_completions.items = completionItems
@@ -96,6 +103,8 @@ function! s:HandleCompletionsResult(out, status) abort
       call s:RenderCurrentCompletion()
     catch
       call codeium#log#Error('Invalid response from language server')
+      call codeium#log#Error(response_text)
+      call codeium#log#Error('stderr: ' . join(a:err, ''))
       call codeium#log#Exception()
     endtry
   endif
