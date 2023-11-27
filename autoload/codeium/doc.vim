@@ -93,10 +93,14 @@ function! codeium#doc#GetDocument(bufId, curLine, curCol) abort
 
   let filetype = substitute(getbufvar(a:bufId, '&filetype'), '\..*', '', '')
   let language = get(s:filetype_aliases, empty(filetype) ? 'text' : filetype, filetype)
-
+  if empty(filetype) && get(g:, 'codeium_warn_filetype_missing', v:true)
+    call codeium#log#Warn('No filetype detected. This will affect completion quality.')
+    let g:codeium_warn_filetype_missing = v:false
+  endif
+  let editor_language = empty(getbufvar(a:bufId, '&filetype')) ? 'unspecified' : getbufvar(a:bufId, '&filetype')
   let doc = {
         \ 'text': join(lines, codeium#util#LineEndingChars()),
-        \ 'editor_language': getbufvar(a:bufId, '&filetype'),
+        \ 'editor_language': editor_language,
         \ 'language': get(s:language_enum, language, 0),
         \ 'cursor_position': {'row': a:curLine - 1, 'col': a:curCol - 1},
         \ 'absolute_path': fnamemodify(bufname(a:bufId), ':p'),
