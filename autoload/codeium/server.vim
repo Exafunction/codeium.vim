@@ -1,5 +1,5 @@
-let s:language_server_version = '1.4.15'
-let s:language_server_sha = '3dee3c5d9fe70aff1993c1a94c1c2bb3c2de5df9'
+let s:language_server_version = '1.4.21'
+let s:language_server_sha = '86c4743512cf764579039626318e45ddf3f91a22'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -31,7 +31,7 @@ function! s:OnExit(result, status, on_complete_cb) abort
   let did_close = has_key(a:result, 'closed')
   if did_close
     call remove(a:result, 'closed')
-    call a:on_complete_cb(a:result.out, a:status)
+    call a:on_complete_cb(a:result.out, a:result.err, a:status)
   else
     " Wait until we receive OnClose, and call on_complete_cb then.
     let a:result.exit_status = a:status
@@ -41,7 +41,7 @@ endfunction
 function! s:OnClose(result, on_complete_cb) abort
   let did_exit = has_key(a:result, 'exit_status')
   if did_exit
-    call a:on_complete_cb(a:result.out, a:result.exit_status)
+    call a:on_complete_cb(a:result.out, a:result.err, a:result.exit_status)
   else
     " Wait until we receive OnExit, and call on_complete_cb then.
     let a:result.closed = v:true
@@ -73,12 +73,13 @@ function! codeium#server#Request(type, data, ...) abort
               \ '--header', 'Content-Type: application/json',
               \ '-d@-'
               \ ]
-  let result = {'out': []}
+  let result = {'out': [], 'err': []}
   let ExitCallback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
   if has('nvim')
     let jobid = jobstart(args, {
                 \ 'on_stdout': { channel, data, t -> add(result.out, join(data, "\n")) },
-                \ 'on_exit': { job, status, t -> ExitCallback(result.out, status) },
+                \ 'on_stderr': { channel, data, t -> add(result.err, join(data, "\n")) },
+                \ 'on_exit': { job, status, t -> ExitCallback(result.out, result.err, status) },
                 \ })
     call chansend(jobid, data)
     call chanclose(jobid, 'stdin')
@@ -88,6 +89,7 @@ function! codeium#server#Request(type, data, ...) abort
                 \ 'in_mode': 'raw',
                 \ 'out_mode': 'raw',
                 \ 'out_cb': { channel, data -> add(result.out, data) },
+                \ 'err_cb': { channel, data -> add(result.err, data) },
                 \ 'exit_cb': { job, status -> s:OnExit(result, status, ExitCallback) },
                 \ 'close_cb': { channel -> s:OnClose(result, ExitCallback) }
                 \ })
