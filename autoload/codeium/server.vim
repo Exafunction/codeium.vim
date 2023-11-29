@@ -1,5 +1,6 @@
 let s:language_server_version = '1.4.21'
 let s:language_server_sha = '86c4743512cf764579039626318e45ddf3f91a22'
+let g:codeium_language_server_sha = s:language_server_sha
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -140,25 +141,31 @@ function! codeium#server#Start(...) abort
 
   let sha = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'sha', s:language_server_sha)
   let bin_dir = codeium#command#HomeDir() . '/bin/' . sha
-  let s:bin = bin_dir . '/language_server_' . bin_suffix
-  call mkdir(bin_dir, 'p')
-
-  if !filereadable(s:bin)
-    call delete(s:bin)
-    if sha ==# s:language_server_sha
-      let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+  if !exists('g:codeium_bin')
+    let s:bin = bin_dir . '/language_server_' . bin_suffix
+    call mkdir(bin_dir, 'p')
+  
+    if !filereadable(s:bin)
+      call delete(s:bin)
+      if sha ==# s:language_server_sha
+        let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+      else
+        let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
+      endif
+      let args = ['curl', '-Lo', s:bin . '.gz', url]
+      if has('nvim')
+        let s:download_job = jobstart(args, {'on_exit': { job, status, t -> s:UnzipAndStart(status) }})
+      else
+        let s:download_job = job_start(args, {'exit_cb': { job, status -> s:UnzipAndStart(status) }})
+      endif
     else
-      let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
-    endif
-    let args = ['curl', '-Lo', s:bin . '.gz', url]
-    if has('nvim')
-      let s:download_job = jobstart(args, {'on_exit': { job, status, t -> s:UnzipAndStart(status) }})
-    else
-      let s:download_job = job_start(args, {'exit_cb': { job, status -> s:UnzipAndStart(status) }})
+      call s:ActuallyStart()
     endif
   else
+    let s:bin = get(g: , "codeium_bin")
     call s:ActuallyStart()
   endif
+  
 endfunction
 
 function! s:UnzipAndStart(status) abort
