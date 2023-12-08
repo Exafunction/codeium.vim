@@ -1,5 +1,5 @@
-let s:language_server_version = '1.4.21'
-let s:language_server_sha = '86c4743512cf764579039626318e45ddf3f91a22'
+let s:language_server_version = '1.6.5'
+let s:language_server_sha = '77445d34fefab6eadcf2d8563b3729421c69cd7b'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -65,7 +65,7 @@ function! codeium#server#Request(type, data, ...) abort
   if s:server_port is# v:null
     throw 'Server port has not been properly initialized.'
   endif
-  let uri = 'http://localhost:' . s:server_port .
+  let uri = 'http://127.0.0.1:' . s:server_port .
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
   let data = json_encode(a:data)
   let args = [
