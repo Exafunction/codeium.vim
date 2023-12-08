@@ -67,7 +67,9 @@ function! codeium#Accept() abort
     " We insert a space, escape to normal mode, then delete the inserted space.
     " This lets us "accept" any auto-inserted indentation which is otherwise
     " removed when we switch to normal mode.
-    let delete_range = " \<Esc>x0d" . delete_chars . 'li'
+    " \"_ sequence makes sure to delete to the void register.
+    " This way our current yank is not overridden.
+    let delete_range = " \<Esc>\"_x0\"_d" . delete_chars . 'li'
   endif
 
   let insert_text = "\<C-R>\<C-O>=codeium#CompletionText()\<CR>"
