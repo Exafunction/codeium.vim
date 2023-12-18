@@ -83,6 +83,19 @@ endfun
 
 command! CodeiumDisable :silent! call CodeiumDisable()
 
+function! CodeiumToggle()
+  if exists('g:codeium_enabled') && g:codeium_enabled == v:false
+      let g:codeium_enabled = v:true
+      call codeium#command#StartLanguageServer()
+      call codeium#RedrawStatusLine()
+  else
+      let g:codeium_enabled = v:false
+      call codeium#RedrawStatusLine()
+  endif
+endfunction
+
+command! CodeiumToggle :silent! call CodeiumToggle()
+
 function! CodeiumManual() " Disable the automatic triggering of completions
   let g:codeium_manual = v:true
 endfun
