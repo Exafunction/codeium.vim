@@ -85,12 +85,9 @@ command! CodeiumDisable :silent! call CodeiumDisable()
 
 function! CodeiumToggle()
   if exists('g:codeium_enabled') && g:codeium_enabled == v:false
-      let g:codeium_enabled = v:true
-      call codeium#command#StartLanguageServer()
-      call codeium#RedrawStatusLine()
+      call CodeiumEnable()
   else
-      let g:codeium_enabled = v:false
-      call codeium#RedrawStatusLine()
+      call CodeiumDisable()
   endif
 endfunction
 
@@ -112,3 +109,4 @@ command! CodeiumAuto :silent! call CodeiumAuto()
 :amenu Plugin.Codeium.Disable\ \Codeium\ \(\:CodeiumDisable\) :call CodeiumDisable() <Esc>
 :amenu Plugin.Codeium.Manual\ \Codeium\ \AI\ \Autocompletion\ \(\:CodeiumManual\) :call CodeiumManual() <Esc>
 :amenu Plugin.Codeium.Automatic\ \Codeium\ \AI\ \Completion\ \(\:CodeiumAuto\) :call CodeiumAuto() <Esc>
+:amenu Plugin.Codeium.Toggle\ \Codeium\ \(\:CodeiumToggle\) :call CodeiumToggle() <Esc>
