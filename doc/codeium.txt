@@ -26,6 +26,12 @@ COMMANDS                                        *:Codeium*
 :Codeium EnableBuffer   Re-enable Codeium completions in the current
                         buffer after running :Codeium DisableBuffer
 
+                                                *:Codeium_Toggle*
+:Codeium Toggle         Enable Codeium completions if they are disabled.
+                        Disable Codeium completions if they are enabled. Does
+                        NOT enable completions for current buffer, if they are
+                        disabled with :Codeium DisableBuffer. However, still
+                        affects other buffers.
 
 OPTIONS                                         *codeium-options*
 
