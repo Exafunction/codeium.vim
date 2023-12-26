@@ -163,6 +163,14 @@ function! s:commands.EnableBuffer(...) abort
   call codeium#command#StartLanguageServer()
 endfunction
 
+function! s:commands.Toggle(...) abort
+  if exists('g:codeium_enabled') && g:codeium_enabled == v:false
+      call s:commands.Enable()
+  else
+      call s:commands.Disable()
+  endif
+endfunction
+
 function! codeium#command#ApiKey() abort
   if s:api_key == ''
     echom 'Codeium: No API key found; maybe you need to run `:Codeium Auth`?'
