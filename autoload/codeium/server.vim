@@ -122,6 +122,14 @@ function! s:SendHeartbeat(timer) abort
 endfunction
 
 function! codeium#server#Start(...) abort
+  let user_defined_codeium_bin = get(g:, 'codeium_bin', '')
+
+  if user_defined_codeium_bin != '' && filereadable(user_defined_codeium_bin)
+    let s:bin = user_defined_codeium_bin
+    call s:ActuallyStart()
+    return
+  endif
+
   silent let os = substitute(system('uname'), '\n', '', '')
   silent let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
