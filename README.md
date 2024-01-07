@@ -208,3 +208,4 @@ Run the following. On windows, you can replace `~/.config` with
 ```bash
 git clone https://github.com/Exafunction/codeium.vim ~/.config/nvim/pack/Exafunction/start/codeium.vim
 ```
+#### NixOS
