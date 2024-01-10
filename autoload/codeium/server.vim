@@ -1,5 +1,5 @@
-let s:language_server_version = '1.6.13'
-let s:language_server_sha = '3056e905a51e39039573c9a3623a1746671cdf15'
+let s:language_server_version = '1.6.22'
+let s:language_server_sha = 'de647c3e19579cdef93b8cf0b60628715249f8d6'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -122,14 +122,6 @@ function! s:SendHeartbeat(timer) abort
 endfunction
 
 function! codeium#server#Start(...) abort
-  let user_defined_codeium_bin = get(g:, 'codeium_bin', '')
-
-  if user_defined_codeium_bin != '' && filereadable(user_defined_codeium_bin)
-    let s:bin = user_defined_codeium_bin
-    call s:ActuallyStart()
-    return
-  endif
-
   silent let os = substitute(system('uname'), '\n', '', '')
   silent let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
