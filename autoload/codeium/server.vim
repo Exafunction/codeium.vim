@@ -1,5 +1,5 @@
-let s:language_server_version = '1.6.26'
-let s:language_server_sha = '0383e6c718c9575110a47c482cc89985e5a9bd58'
+let s:language_server_version = '1.6.20'
+let s:language_server_sha = 'c8aabc8753a3cea9d68cda55f9395290bdf75942'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -154,13 +154,7 @@ function! codeium#server#Start(...) abort
   if !filereadable(s:bin)
     call delete(s:bin)
     if sha ==# s:language_server_sha
-      if has_key(config, 'portal_url') && !empty(config.portal_url)
-        let base_url = config.portal_url
-      else
-        let base_url = 'https://github.com/Exafunction/codeium/releases/download'
-      endif
-      let base_url = strpart(base_url, 0, strridx(base_url, '/'))
-      let url = base_url . '/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+      let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
     else
       let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
     endif
