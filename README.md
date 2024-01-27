@@ -66,7 +66,7 @@ let g:codeium_disable_bindings = 1
 
 or in Neovim:
 
-```vim
+```lua
 vim.g.codeium_disable_bindings = 1
 ```
 
@@ -125,7 +125,7 @@ let g:codeium_enabled = v:false
 
 or in Neovim:
 
-```vim
+```lua
 vim.g.codeium_enabled = false
 ```
 
