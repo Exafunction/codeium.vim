@@ -11,9 +11,9 @@ endif
 
 function! s:SetStyle() abort
   if &t_Co == 256
-    hi def CodeiumSuggestion guifg=#808080 ctermfg=244
+    hi def CodeiumSuggestion guifg=#808080 ctermfg=244 cterm=italic gui=italic
   else
-    hi def CodeiumSuggestion guifg=#808080 ctermfg=8
+    hi def CodeiumSuggestion guifg=#808080 ctermfg=8 cterm=italic gui=italic
   endif
   hi def link CodeiumAnnotation Normal
 endfunction
