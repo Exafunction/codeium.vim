@@ -1,0 +1,15 @@
+name: Add Version Tag
+
+on: push
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get version from file
+        id: version
+        run: echo ::set-output name=version::$(grep -oP "(?<=s:language_server_version = ')[^']+" autoload/codeium/server.vim)
+      - name: Add tag to commit
+        run: git tag ${{ steps.version.outputs.version }}
