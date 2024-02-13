@@ -1,5 +1,5 @@
-let s:language_server_version = '1.6.28'
-let s:language_server_sha = 'f485965568948013d9f47815917f2f1f3a99089d'
+let s:language_server_version = '1.2.104'
+let s:language_server_sha = 'ab59278dfa738977096f6bfc2299d9941fcc3252'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -31,7 +31,7 @@ function! s:OnExit(result, status, on_complete_cb) abort
   let did_close = has_key(a:result, 'closed')
   if did_close
     call remove(a:result, 'closed')
-    call a:on_complete_cb(a:result.out, a:result.err, a:status)
+    call a:on_complete_cb(a:result.out, a:status)
   else
     " Wait until we receive OnClose, and call on_complete_cb then.
     let a:result.exit_status = a:status
@@ -41,7 +41,7 @@ endfunction
 function! s:OnClose(result, on_complete_cb) abort
   let did_exit = has_key(a:result, 'exit_status')
   if did_exit
-    call a:on_complete_cb(a:result.out, a:result.err, a:result.exit_status)
+    call a:on_complete_cb(a:result.out, a:result.exit_status)
   else
     " Wait until we receive OnExit, and call on_complete_cb then.
     let a:result.closed = v:true
@@ -65,7 +65,7 @@ function! codeium#server#Request(type, data, ...) abort
   if s:server_port is# v:null
     throw 'Server port has not been properly initialized.'
   endif
-  let uri = 'http://127.0.0.1:' . s:server_port .
+  let uri = 'http://localhost:' . s:server_port .
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
   let data = json_encode(a:data)
   let args = [
@@ -73,13 +73,12 @@ function! codeium#server#Request(type, data, ...) abort
               \ '--header', 'Content-Type: application/json',
               \ '-d@-'
               \ ]
-  let result = {'out': [], 'err': []}
+  let result = {'out': []}
   let ExitCallback = a:0 && !empty(a:1) ? a:1 : function('s:NoopCallback')
   if has('nvim')
     let jobid = jobstart(args, {
                 \ 'on_stdout': { channel, data, t -> add(result.out, join(data, "\n")) },
-                \ 'on_stderr': { channel, data, t -> add(result.err, join(data, "\n")) },
-                \ 'on_exit': { job, status, t -> ExitCallback(result.out, result.err, status) },
+                \ 'on_exit': { job, status, t -> ExitCallback(result.out, status) },
                 \ })
     call chansend(jobid, data)
     call chanclose(jobid, 'stdin')
@@ -89,7 +88,6 @@ function! codeium#server#Request(type, data, ...) abort
                 \ 'in_mode': 'raw',
                 \ 'out_mode': 'raw',
                 \ 'out_cb': { channel, data -> add(result.out, data) },
-                \ 'err_cb': { channel, data -> add(result.err, data) },
                 \ 'exit_cb': { job, status -> s:OnExit(result, status, ExitCallback) },
                 \ 'close_cb': { channel -> s:OnClose(result, ExitCallback) }
                 \ })
@@ -122,14 +120,6 @@ function! s:SendHeartbeat(timer) abort
 endfunction
 
 function! codeium#server#Start(...) abort
-  let user_defined_codeium_bin = get(g:, 'codeium_bin', '')
-
-  if user_defined_codeium_bin != '' && filereadable(user_defined_codeium_bin)
-    let s:bin = user_defined_codeium_bin
-    call s:ActuallyStart()
-    return
-  endif
-
   silent let os = substitute(system('uname'), '\n', '', '')
   silent let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
@@ -154,14 +144,7 @@ function! codeium#server#Start(...) abort
   if !filereadable(s:bin)
     call delete(s:bin)
     if sha ==# s:language_server_sha
-      let config = get(g:, 'codeium_server_config', {})
-      if has_key(config, 'portal_url') && !empty(config.portal_url)
-        let base_url = config.portal_url
-      else
-        let base_url = 'https://github.com/Exafunction/codeium/releases/download'
-      endif
-      let base_url = substitute(base_url, '/\+$', '', '')
-      let url = base_url . '/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
+      let url = 'https://github.com/Exafunction/codeium/releases/download/language-server-v' . s:language_server_version . '/language_server_' . bin_suffix . '.gz'
     else
       let url = 'https://storage.googleapis.com/exafunction-dist/codeium/' . sha . '/language_server_' . bin_suffix . '.gz'
     endif
