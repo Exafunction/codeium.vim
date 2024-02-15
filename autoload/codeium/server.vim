@@ -221,7 +221,8 @@ function! s:ActuallyStart() abort
   let args = [
         \ s:bin,
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
-        \ '--manager_dir', manager_dir
+        \ '--manager_dir', manager_dir,
+        \ '--enable_chat_web_server', '--enable_chat_client'
         \ ]
   if has_key(config, 'api_url') && !empty(config.api_url)
     let args += ['--enterprise_mode']
