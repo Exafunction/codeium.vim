@@ -390,6 +390,43 @@ function! codeium#CycleOrComplete() abort
   endif
 endfunction
 
+function! s:LaunchChat(out, err, status) abort
+  let l:metadata = codeium#server#RequestMetadata()
+  let l:processes = json_decode(join(a:out, ''))
+  let l:chat_port = l:processes['chatClientPort']
+  let l:ws_port = l:processes['chatWebServerPort']
+  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&locale=en'
+  let l:browser = codeium#command#BrowserCommand()
+  let opened_browser = v:false
+  if !empty(browser)
+    echomsg 'Navigating to ' . l:url
+    try
+      call system(l:browser . ' ' . '"' . l:url . '"')
+      if v:shell_error is# 0
+        let l:opened_browser = v:true
+      endif
+    catch
+    endtry
+
+    if !l:opened_browser
+      echomsg 'Failed to open browser. Please go to the link above.'
+    endif
+  else
+    echomsg 'No available browser found. Please go to ' . l:url
+  endif
+endfunction
+
+function! codeium#Chat() abort
+  if (!codeium#Enabled())
+    return
+  endif
+  try
+    call codeium#server#Request('GetProcesses', codeium#server#RequestMetadata(), function('s:LaunchChat', []))
+  catch
+    call codeium#log#Exception()
+  endtry
+endfunction
+
 function! codeium#GetStatusString(...) abort
   let s:using_codeium_status = 1
   if (!codeium#Enabled())
