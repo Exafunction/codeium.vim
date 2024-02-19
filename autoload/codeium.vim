@@ -395,7 +395,7 @@ function! s:LaunchChat(out, err, status) abort
   let l:processes = json_decode(join(a:out, ''))
   let l:chat_port = l:processes['chatClientPort']
   let l:ws_port = l:processes['chatWebServerPort']
-  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&locale=en'
+  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&locale=en&ide_telemetry_enabled=true'
   let l:browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
