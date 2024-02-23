@@ -437,14 +437,13 @@ endfunction
 
 " This assumes a single workspace is involved per Vim session, for now.
 let s:codeium_workspace_indexed = v:false
-let s:codeium_workspace_dir = s:GetProjectRoot()
 function! codeium#AddTrackedWorkspace() abort
   if (!codeium#Enabled() || s:codeium_workspace_indexed)
     return
   endif
   let s:codeium_workspace_indexed = v:true
   try
-    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:codeium_workspace_dir})
+    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:getProjectRoot()})
   catch
     call codeium#log#Exception()
   endtry
