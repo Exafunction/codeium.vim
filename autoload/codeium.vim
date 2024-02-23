@@ -455,7 +455,7 @@ function! codeium#Chat() abort
   endif
   try
     call codeium#server#Request('GetProcesses', codeium#server#RequestMetadata(), function('s:LaunchChat', []))
-	call codeium#AddTrackedWorkspace()
+    call codeium#AddTrackedWorkspace()
   catch
     call codeium#log#Exception()
   endtry
