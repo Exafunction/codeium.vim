@@ -160,6 +160,16 @@ Please check `:help statusline` for further information about building statuslin
 
 vim-airline supports Codeium out-of-the-box since commit [3854429d](https://github.com/vim-airline/vim-airline/commit/3854429d99c8a2fb555a9837b155f33c957a2202).
 
+### Launching Codeium Chat
+
+Calling the `codeium#Chat()` function will enable search and indexing in the current project and launch Codeium Chat in a new browser window.
+
+The project root is determined by looking in Vim's current working directory for some specific files or directories to be present and goes up to parent directories until one is found.  This list of hints is user-configurable and the default value is:
+
+```let g:codeium_workspace_root_hints = ['.bzr','.git','.hg','.svn','_FOSSIL_','package.json']```
+
+Note that launching chat enables telemetry.
+
 ## 💾 Installation Options
 
 ### 💤 Lazy
