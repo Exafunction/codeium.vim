@@ -443,7 +443,7 @@ function! codeium#AddTrackedWorkspace() abort
   endif
   let s:codeium_workspace_indexed = v:true
   try
-    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:getProjectRoot()})
+    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:GetProjectRoot()})
   catch
     call codeium#log#Exception()
   endtry
