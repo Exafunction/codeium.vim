@@ -218,7 +218,7 @@ function! s:ActuallyStart() abort
   let manager_dir = tempname() . '/codeium/manager'
   call mkdir(manager_dir, 'p')
 
-let args = [
+  let args = [
         \ s:bin,
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
         \ '--manager_dir', manager_dir,
