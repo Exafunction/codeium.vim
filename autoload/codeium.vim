@@ -390,6 +390,77 @@ function! codeium#CycleOrComplete() abort
   endif
 endfunction
 
+function! s:LaunchChat(out, err, status) abort
+  let l:metadata = codeium#server#RequestMetadata()
+  let l:processes = json_decode(join(a:out, ''))
+  let l:chat_port = l:processes['chatClientPort']
+  let l:ws_port = l:processes['chatWebServerPort']
+  " Hard-coded to English locale and allowed telemetry.
+  " Not touching has_enterprise_extension
+  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&app_name=Vim&locale=en&ide_telemetry_enabled=true&has_index_service=true'
+  let l:browser = codeium#command#BrowserCommand()
+  let opened_browser = v:false
+  if !empty(browser)
+    echomsg 'Navigating to ' . l:url
+    try
+      call system(l:browser . ' ' . '"' . l:url . '"')
+      if v:shell_error is# 0
+        let l:opened_browser = v:true
+      endif
+    catch
+    endtry
+
+    if !l:opened_browser
+      echomsg 'Failed to open browser. Please go to the link above.'
+    endif
+  else
+    echomsg 'No available browser found. Please go to ' . l:url
+  endif
+endfunction
+
+let g:codeium_workspace_root_hints = ['.bzr','.git','.hg','.svn','_FOSSIL_','package.json']
+function! s:GetProjectRoot() abort
+  let l:last_dir = ''
+  let l:dir = getcwd()
+  while l:dir != l:last_dir
+    for l:root_hint in g:codeium_workspace_root_hints
+      let l:hint = l:dir . '/' . l:root_hint
+      if isdirectory(l:hint) || filereadable(l:hint)
+        return l:dir
+      endif
+    endfor
+    let l:last_dir = l:dir
+    let l:dir = fnamemodify(l:dir, ':h')
+  endwhile
+  return getcwd()
+endfunction
+
+" This assumes a single workspace is involved per Vim session, for now.
+let s:codeium_workspace_indexed = v:false
+function! codeium#AddTrackedWorkspace() abort
+  if (!codeium#Enabled() || s:codeium_workspace_indexed)
+    return
+  endif
+  let s:codeium_workspace_indexed = v:true
+  try
+    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:GetProjectRoot()})
+  catch
+    call codeium#log#Exception()
+  endtry
+endfunction
+
+function! codeium#Chat() abort
+  if (!codeium#Enabled())
+    return
+  endif
+  try
+    call codeium#server#Request('GetProcesses', codeium#server#RequestMetadata(), function('s:LaunchChat', []))
+    call codeium#AddTrackedWorkspace()
+  catch
+    call codeium#log#Exception()
+  endtry
+endfunction
+
 function! codeium#GetStatusString(...) abort
   let s:using_codeium_status = 1
   if (!codeium#Enabled())
