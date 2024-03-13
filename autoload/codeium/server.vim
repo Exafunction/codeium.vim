@@ -1,5 +1,5 @@
-let s:language_server_version = '1.8.5'
-let s:language_server_sha = 'c0233f8d8a2279e99bfde38bb3cca2bb50dc8392'
+let s:language_server_version = '1.8.11'
+let s:language_server_sha = 'ae9d4149edcf0d092aac843e1d0e2d395e771664'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -221,9 +221,7 @@ function! s:ActuallyStart() abort
   let args = [
         \ s:bin,
         \ '--api_server_url', get(config, 'api_url', 'https://server.codeium.com'),
-        \ '--manager_dir', manager_dir,
-        \ '--enable_local_search', '--enable_index_service', '--search_max_workspace_file_count', '5000',
-        \ '--enable_chat_web_server', '--enable_chat_client'
+        \ '--manager_dir', manager_dir
         \ ]
   if has_key(config, 'api_url') && !empty(config.api_url)
     let args += ['--enterprise_mode']
