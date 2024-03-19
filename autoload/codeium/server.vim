@@ -129,9 +129,16 @@ function! codeium#server#Start(...) abort
     call s:ActuallyStart()
     return
   endif
+  let user_defined_os = get(g:, 'codeium_os', '')
+  let user_defined_arch = get(g:, 'codeium_arch', '')
 
-  silent let os = substitute(system('uname'), '\n', '', '')
-  silent let arch = substitute(system('uname -m'), '\n', '', '')
+  if user_defined_os != '' && user_defined_arch != ''
+    let os = user_defined_os
+    let arch = user_defined_arch
+  else
+    silent let os = substitute(system('uname'), '\n', '', '')
+    silent let arch = substitute(system('uname -m'), '\n', '', '')
+  endif
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
   if os ==# 'Linux' && is_arm
