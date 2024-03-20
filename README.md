@@ -134,7 +134,7 @@ completions:
 let g:codeium_manual = v:true
 ```
 
-To disable automatic text rendering of suggestions (the grey text that appears for a suggestion) :
+To disable automatic text rendering of suggestions (the gray text that appears for a suggestion):
 
 ```vim
 let g:codeium_render = v:false
