@@ -94,7 +94,20 @@ g:codeium_bin           Manually set the path to the `codeium` language server
 >
                         let g:codeium_bin = "~/.local/bin/codeium_language_server"
 <
-
+                                                *g:codeium_os*
+g:codeium_os            Manually set the host OS, accepted values are
+                        "Linux", "Darwin", "Windows". if unset, the value will
+                        be obtained using `uname`.
+>
+                        let g:codeium_os = "Linux"
+<
+                                                *g:codeium_arch*
+g:codeium_arch          Manually set the host architecture, accepted values
+                        are "x86_64", "aarch64", "arm". If unset, the value
+                        will be obtained using `uname -m`.
+>
+                        let g:codeium_arch = "x86_64"
+<
 MAPS                                            *codeium-maps*
 
                                                 *codeium-i_<Tab>*
