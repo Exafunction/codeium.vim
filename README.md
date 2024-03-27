@@ -144,6 +144,11 @@ If you would like to just disable the automatic triggering of completions:
 
 ```vim
 let g:codeium_manual = v:true
+
+" You might want to use `CycleOrComplete()` instead of `CycleCompletions(1)`.
+" This will make the forward cycling of suggestions also trigger the first
+" suggestion manually.
+imap <C-;> <Cmd>call codeium#CycleOrComplete()<CR>
 ```
 
 To disable automatic text rendering of suggestions (the gray text that appears for a suggestion):
