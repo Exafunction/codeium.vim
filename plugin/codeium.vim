@@ -27,6 +27,7 @@ endfunction
 augroup codeium
   autocmd!
   autocmd InsertEnter,CursorMovedI,CompleteChanged * call codeium#DebouncedComplete()
+  autocmd BufEnter     * if codeium#Enabled()|call codeium#command#StartLanguageServer()|endif
   autocmd BufEnter     * if mode() =~# '^[iR]'|call codeium#DebouncedComplete()|endif
   autocmd InsertLeave  * call codeium#Clear()
   autocmd BufLeave     * if mode() =~# '^[iR]'|call codeium#Clear()|endif
@@ -60,10 +61,6 @@ if !get(g:, 'codeium_disable_bindings')
 endif
 
 call s:SetStyle()
-
-if codeium#Enabled()
-  call codeium#command#StartLanguageServer()
-endif
 
 let s:dir = expand('<sfile>:h:h')
 if getftime(s:dir . '/doc/codeium.txt') > getftime(s:dir . '/doc/tags')
