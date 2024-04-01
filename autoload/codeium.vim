@@ -21,10 +21,7 @@ function! codeium#Enabled() abort
 
   let codeium_filetypes = s:default_codeium_enabled
   call extend(codeium_filetypes, get(g:, 'codeium_filetypes', {}))
-
-  let codeium_filetypes_disabled_by_default = get(g:, 'codeium_filetypes_disabled_by_default') || get(b:, 'codeium_filetypes_disabled_by_default')
-
-  if !get(codeium_filetypes, &filetype, !codeium_filetypes_disabled_by_default)
+  if !get(codeium_filetypes, &filetype, 1)
     return v:false
   endif
 
@@ -398,15 +395,9 @@ function! s:LaunchChat(out, err, status) abort
   let l:processes = json_decode(join(a:out, ''))
   let l:chat_port = l:processes['chatClientPort']
   let l:ws_port = l:processes['chatWebServerPort']
-
-  let config = get(g:, 'codeium_server_config', {})
-  let l:has_enterprise_extension = "false"
-  if has_key(config, 'api_url') && !empty(config.api_url)
-    let l:has_enterprise_extension = "true"
-  endif
-
   " Hard-coded to English locale and allowed telemetry.
-  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&has_enterprise_extension=' . l:has_enterprise_extension . '&app_name=Vim&locale=en&ide_telemetry_enabled=true&has_index_service=true'
+  " Not touching has_enterprise_extension
+  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&app_name=Vim&locale=en&ide_telemetry_enabled=true&has_index_service=true'
   let l:browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)

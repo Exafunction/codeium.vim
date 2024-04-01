@@ -1,5 +1,5 @@
-let s:language_server_version = '1.8.10'
-let s:language_server_sha = 'c5111ded242add71608e7a70094645bb463f5ad8'
+let s:language_server_version = '1.8.21'
+let s:language_server_sha = '02866135a29445c3306c45f8c77a38cd9edced00'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -129,16 +129,9 @@ function! codeium#server#Start(...) abort
     call s:ActuallyStart()
     return
   endif
-  let user_defined_os = get(g:, 'codeium_os', '')
-  let user_defined_arch = get(g:, 'codeium_arch', '')
 
-  if user_defined_os != '' && user_defined_arch != ''
-    let os = user_defined_os
-    let arch = user_defined_arch
-  else
-    silent let os = substitute(system('uname'), '\n', '', '')
-    silent let arch = substitute(system('uname -m'), '\n', '', '')
-  endif
+  silent let os = substitute(system('uname'), '\n', '', '')
+  silent let arch = substitute(system('uname -m'), '\n', '', '')
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
   if os ==# 'Linux' && is_arm

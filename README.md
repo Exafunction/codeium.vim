@@ -114,8 +114,8 @@ let g:codeium_filetypes = {
 
 Codeium is enabled by default for most filetypes.
 
-You can also _disable_ codeium by default with the `g:codeium_enabled` variable,
-and enable it manually per buffer by running `:CodeiumEnable`:
+You can also _disable_ codeium by default with the `g:codeium_enabled`
+variable:
 
 ```vim
 let g:codeium_enabled = v:false
@@ -127,34 +127,11 @@ or in Neovim:
 vim.g.codeium_enabled = false
 ```
 
-Or you can disable codeium for _all filetypes_ with the `g:codeium_filetypes_disabled_by_default` variable,
-and use the `g:codeium_filetypes` variable to selectively enable codeium for specified filetypes:
-
-```vim
-" let g:codeium_enabled = v:true
-let g:codeium_filetypes_disabled_by_default = v:true
-
-let g:codeium_filetypes = {
-    \ "rust": v:true,
-    \ "typescript": v:true,
-    \ }
-```
-
-If you would like to just disable the automatic triggering of completions:
+Instead, if you would like to just disable the automatic triggering of
+completions:
 
 ```vim
 let g:codeium_manual = v:true
-
-" You might want to use `CycleOrComplete()` instead of `CycleCompletions(1)`.
-" This will make the forward cycling of suggestions also trigger the first
-" suggestion manually.
-imap <C-;> <Cmd>call codeium#CycleOrComplete()<CR>
-```
-
-To disable automatic text rendering of suggestions (the gray text that appears for a suggestion):
-
-```vim
-let g:codeium_render = v:false
 ```
 
 ### Show Codeium status in statusline
