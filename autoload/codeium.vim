@@ -403,6 +403,7 @@ function! s:LaunchChat(out, err, status) abort
   let l:has_enterprise_extension = "false"
   if has_key(config, 'api_url') && !empty(config.api_url)
     let l:has_enterprise_extension = "true"
+    let args += ['--portal_url', get(config, 'portal_url', 'https://codeium.example.com')]
   endif
 
   " Hard-coded to English locale and allowed telemetry.
