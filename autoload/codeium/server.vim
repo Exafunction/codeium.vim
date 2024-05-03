@@ -234,6 +234,7 @@ function! s:ActuallyStart() abort
         \ ]
   if has_key(config, 'api_url') && !empty(config.api_url)
     let args += ['--enterprise_mode']
+    let args += ['--portal_url', get(config, 'portal_url', 'https://codeium.example.com')]
   endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
