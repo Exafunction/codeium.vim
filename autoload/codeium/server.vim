@@ -1,5 +1,5 @@
-let s:language_server_version = '1.8.30'
-let s:language_server_sha = '98dd1530ef0dce8888caa538e96fe193a7956819'
+let s:language_server_version = '1.8.45'
+let s:language_server_sha = '83dadda2bd1a9946542096cce0cfd2bb4d2a9074'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -107,10 +107,31 @@ function! s:FindPort(dir, timer) abort
     if time - getftime(path) <= 5 && getftype(path) ==# 'file'
       call codeium#log#Info('Found port: ' . name)
       let s:server_port = name
+      call s:RequestServerStatus()
       call timer_stop(a:timer)
       break
     endif
   endfor
+endfunction
+
+function! s:RequestServerStatus() abort
+  call codeium#server#Request('GetStatus', {'metadata': codeium#server#RequestMetadata()}, function('s:HandleGetStatusResponse'))
+endfunction
+
+function! s:HandleGetStatusResponse(out, err, status) abort
+  " Check if the request was successful
+  if a:status == 0
+    " Parse the JSON response
+    let response = json_decode(join(a:out, "\n"))
+    let status = response.status
+    " Check if there is a message in the response and echo it
+    if has_key(status, 'message') && !empty(status.message)
+      echom status.message
+    endif
+  else
+    " Handle error if the status is not 0 or if there is stderr output
+    call codeium#log#Error(join(a:err, "\n"))
+  endif
 endfunction
 
 function! s:SendHeartbeat(timer) abort
