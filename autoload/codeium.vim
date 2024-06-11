@@ -39,14 +39,14 @@ function! codeium#CompletionText() abort
   endtry
 endfunction
 
-function! codeium#Accept() abort
+function! s:CompletionInserter(current_completion, insert_text) abort
   let default = get(g:, 'codeium_tab_fallback', pumvisible() ? "\<C-N>" : "\t")
 
   if mode() !~# '^[iR]' || !exists('b:_codeium_completions')
     return default
   endif
 
-  let current_completion = s:GetCurrentCompletionItem()
+  let current_completion = a:current_completion
   if current_completion is v:null
     return default
   endif
@@ -58,7 +58,7 @@ function! codeium#Accept() abort
   let start_offset = get(range, 'startOffset', 0)
   let end_offset = get(range, 'endOffset', 0)
 
-  let text = current_completion.completion.text . suffix_text
+  let text = a:insert_text . suffix_text
   if empty(text)
     return default
   endif
@@ -85,6 +85,25 @@ function! codeium#Accept() abort
   endif
   call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
   return delete_range . insert_text . cursor_text
+endfunction
+
+function! codeium#Accept() abort
+  let current_completion = s:GetCurrentCompletionItem()
+  return s:CompletionInserter(current_completion, current_completion.completion.text) 
+endfunction
+
+function! codeium#AcceptNextWord() abort
+  let current_completion = s:GetCurrentCompletionItem()
+  let prefix_text = get(current_completion.completionParts[0], 'prefix', '')
+  let completion_text = get(current_completion.completionParts[0], 'text', '')
+  let next_word = matchstr(completion_text, '\v^\W*\k*')
+  return s:CompletionInserter(current_completion, prefix_text . next_word)
+endfunction
+
+function! codeium#AcceptNextLine() abort
+  let current_completion = s:GetCurrentCompletionItem()
+  let text = substitute(current_completion.completion.text, '\v\n.*$', '', '')
+  return s:CompletionInserter(current_completion, text)
 endfunction
 
 function! s:HandleCompletionsResult(out, err, status) abort
