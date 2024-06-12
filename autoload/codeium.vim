@@ -94,8 +94,12 @@ endfunction
 
 function! codeium#AcceptNextWord() abort
   let current_completion = s:GetCurrentCompletionItem()
-  let prefix_text = get(current_completion.completionParts[0], 'prefix', '')
-  let completion_text = get(current_completion.completionParts[0], 'text', '')
+  let completion_parts = get(current_completion, 'completionParts', [])
+  if len(completion_parts) == 0
+    return ''
+  endif
+  let prefix_text = get(completion_parts[0], 'prefix', '')
+  let completion_text = get(completion_parts[0], 'text', '')
   let next_word = matchstr(completion_text, '\v^\W*\k*')
   return s:CompletionInserter(current_completion, prefix_text . next_word)
 endfunction
