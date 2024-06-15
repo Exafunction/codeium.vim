@@ -61,9 +61,6 @@ if !get(g:, 'codeium_disable_bindings')
   if empty(mapcheck('<C-Right>', 'i'))
     imap <script><silent><nowait><expr> <C-Right> codeium#AcceptNextWord()
   endif
-  if empty(mapcheck('<Right>', 'i'))
-    imap <script><silent><nowait><expr> <Right> codeium#AcceptNextLine()
-  endif
 endif
 
 call s:SetStyle()
