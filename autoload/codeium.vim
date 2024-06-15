@@ -89,15 +89,12 @@ endfunction
 
 function! codeium#Accept() abort
   let current_completion = s:GetCurrentCompletionItem()
-  return s:CompletionInserter(current_completion, current_completion.completion.text) 
+  return s:CompletionInserter(current_completion, current_completion is v:null ? '' : current_completion.completion.text) 
 endfunction
 
 function! codeium#AcceptNextWord() abort
   let current_completion = s:GetCurrentCompletionItem()
-  if current_completion is v:null
-    return ''
-  endif
-  let completion_parts = get(current_completion, 'completionParts', [])
+  let completion_parts = current_completion is v:null ? [] : get(current_completion, 'completionParts', [])
   if len(completion_parts) == 0
     return ''
   endif
@@ -109,10 +106,7 @@ endfunction
 
 function! codeium#AcceptNextLine() abort
   let current_completion = s:GetCurrentCompletionItem()
-  if current_completion is v:null
-    return ''
-  endif
-  let text = substitute(current_completion.completion.text, '\v\n.*$', '', '')
+  let text = current_completion is v:null ? '' : substitute(current_completion.completion.text, '\v\n.*$', '', '')
   return s:CompletionInserter(current_completion, text)
 endfunction
 
