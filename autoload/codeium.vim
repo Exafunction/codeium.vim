@@ -89,7 +89,7 @@ endfunction
 
 function! codeium#Accept() abort
   let current_completion = s:GetCurrentCompletionItem()
-  return s:CompletionInserter(current_completion, current_completion is v:null ? '' : current_completion.completion.text) 
+  return s:CompletionInserter(current_completion, current_completion is v:null ? '' : current_completion.completion.text)
 endfunction
 
 function! codeium#AcceptNextWord() abort
