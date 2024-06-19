@@ -58,10 +58,10 @@ if !get(g:, 'codeium_disable_bindings')
   if empty(mapcheck('<M-Bslash>', 'i'))
     imap <M-Bslash> <Plug>(codeium-complete)
   endif
-  if empty(mapcheck('<C-Right>', 'i'))
+  if empty(mapcheck('<C-k>', 'i'))
     imap <script><silent><nowait><expr> <C-Right> codeium#AcceptNextWord()
   endif
-  if empty(mapcheck('<Right>', 'i'))
+  if empty(mapcheck('<C-l>', 'i'))
     imap <script><silent><nowait><expr> <Right> codeium#AcceptNextLine()
   endif
 endif
