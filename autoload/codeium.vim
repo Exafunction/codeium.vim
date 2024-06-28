@@ -522,7 +522,9 @@ function! codeium#GetStatusString(...) abort
 endfunction
 
 function! codeium#RedrawStatusLine() abort
-  if s:using_codeium_status
+  if has('nvim') && s:using_codeium_status
+    lua vim.schedule(vim.cmd.redrawstatus)
+  elseif s:using_codeium_status
     redrawstatus
   endif
 endfunction
