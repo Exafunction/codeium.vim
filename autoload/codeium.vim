@@ -423,9 +423,9 @@ function! s:LaunchChat(out, err, status) abort
   let l:ws_port = l:processes['chatWebServerPort']
 
   let config = get(g:, 'codeium_server_config', {})
-  let l:has_enterprise_extension = "false"
+  let l:has_enterprise_extension = 'false'
   if has_key(config, 'api_url') && !empty(config.api_url)
-    let l:has_enterprise_extension = "true"
+    let l:has_enterprise_extension = 'true'
   endif
 
   " Hard-coded to English locale and allowed telemetry.
@@ -475,7 +475,7 @@ function! codeium#AddTrackedWorkspace() abort
   endif
   let s:codeium_workspace_indexed = v:true
   try
-    call codeium#server#Request('AddTrackedWorkspace', {"workspace": s:GetProjectRoot()})
+    call codeium#server#Request('AddTrackedWorkspace', {'workspace': s:GetProjectRoot()})
   catch
     call codeium#log#Exception()
   endtry
