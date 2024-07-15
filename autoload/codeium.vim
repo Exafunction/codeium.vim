@@ -524,6 +524,7 @@ endfunction
 function! codeium#RedrawStatusLine() abort
   if has('nvim') && s:using_codeium_status
     lua vim.schedule(vim.cmd.redrawstatus)
+    lua vim.schedule(vim.cmd.redrawtabline)
   elseif s:using_codeium_status
     redrawstatus
   endif
