@@ -240,7 +240,8 @@ function! s:RenderCurrentCompletion() abort
 
     if has('nvim')
       let _virtcol = virtcol([row, _col+diff])
-      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': _virtcol - 1}
+      " Set priority high so that completions appear above coc.nvim inlay hints
+      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': _virtcol - 1, 'priority': 65535 }
       if part.type ==# 'COMPLETION_PART_TYPE_INLINE_MASK'
         let data.virt_text = [[text, s:hlgroup]]
       elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'
