@@ -66,6 +66,7 @@ if !get(g:, 'codeium_disable_bindings')
   endif
 endif
 
+call s:MapTab()
 call s:SetStyle()
 
 let s:dir = expand('<sfile>:h:h')
