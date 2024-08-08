@@ -123,7 +123,7 @@ function! s:HandleGetStatusResponse(out, err, status) abort
   if a:status == 0
     " Parse the JSON response
     let response = json_decode(join(a:out, "\n"))
-    let status = response.status
+    let status = get(response, 'status', {})
     " Check if there is a message in the response and echo it
     if has_key(status, 'message') && !empty(status.message)
       echom status.message
