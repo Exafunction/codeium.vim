@@ -165,7 +165,7 @@ function! codeium#server#Start(...) abort
   if empty(os)
     if has("linux")
       let os = "Linux"
-    elseif has("darwin")
+    elseif has("mac")
       let os = "Darwin"
     endif
   endif
