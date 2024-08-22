@@ -239,8 +239,11 @@ function! s:RenderCurrentCompletion() abort
     endif
 
     if has('nvim')
+      " Set priority high so that completions appear above LSP inlay hints
+      let priority = get(b:, 'codeium_virtual_text_priority',
+                  \ get(g:, 'codeium_virtual_text_priority', 65535))
       let _virtcol = virtcol([row, _col+diff])
-      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': _virtcol - 1}
+      let data = {'id': idx + 1, 'hl_mode': 'combine', 'virt_text_win_col': _virtcol - 1, 'priority': priority }
       if part.type ==# 'COMPLETION_PART_TYPE_INLINE_MASK'
         let data.virt_text = [[text, s:hlgroup]]
       elseif part.type ==# 'COMPLETION_PART_TYPE_BLOCK'

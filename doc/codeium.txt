@@ -108,6 +108,30 @@ g:codeium_arch          Manually set the host architecture, accepted values
 >
                         let g:codeium_arch = "x86_64"
 <
+                                                *g:codeium_virtual_text_priority*
+g:codeium_virtual_text_priority
+                        The priority used for Codeium's virtual text completions
+                        in Neovim. This can control how completions appear when
+                        multiple virtual text items are on the same line, such
+                        as when using LSP inlay hints.
+
+                        The priority can be set on a per-buffer basis by setting
+                        the b:codeium_virtual_text_priority variable. If
+                        neither of these are set, the default priority is 65535,
+                        which will usually place it above any other virtual text.
+>
+                        let g:codeium_virtual_text_priority = 1000
+<
+
+                                                *b:codeium_virtual_text_priority*
+b:codeium_virtual_text_priority
+                        The priority given to Codeium's virtual text completions
+                        for the current buffer in Neovim. If not set,
+                        g:codeium_virtual_text_priority is used.
+>
+                        let b:codeium_virtual_text_priority = 1000
+<
+
 MAPS                                            *codeium-maps*
 
                                                 *codeium-i_<Tab>*
