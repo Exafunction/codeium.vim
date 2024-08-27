@@ -470,6 +470,15 @@ function! s:GetProjectRoot() abort
   return getcwd()
 endfunction
 
+function! codeium#RefreshContext() abort
+  " current buffer is 1
+  try
+    call codeium#server#Request('RefreshContextForIdeAction', {'active_document': codeium#doc#GetDocument(1, line('.'), line('.'))})
+  catch
+    call codeium#log#Exception()
+  endtry
+endfunction
+
 " This assumes a single workspace is involved per Vim session, for now.
 let s:codeium_workspace_indexed = v:false
 function! codeium#AddTrackedWorkspace() abort
@@ -489,6 +498,7 @@ function! codeium#Chat() abort
     return
   endif
   try
+    call codeium#RefreshContext()
     call codeium#server#Request('GetProcesses', codeium#server#RequestMetadata(), function('s:LaunchChat', []))
     call codeium#AddTrackedWorkspace()
   catch

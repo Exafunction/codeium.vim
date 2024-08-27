@@ -1,5 +1,5 @@
-let s:language_server_version = '1.12.0'
-let s:language_server_sha = 'beda8738f37970fd4066114bfb0e930e01316a62'
+let s:language_server_version = '1.14.11'
+let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -172,6 +172,15 @@ function! codeium#server#Start(...) abort
     let bin_suffix = 'macos_x64'
   else
     let bin_suffix = 'windows_x64.exe'
+  endif
+
+  let config = get(g:, 'codeium_server_config', {})
+  if has_key(config, 'portal_url') && !empty(config.portal_url)
+    let response = system('curl -s ' . config.portal_url . '/api/version')
+    if v:shell_error != 0
+      let s:language_server_version = '1.14.11'
+      let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
+    endif
   endif
 
   let sha = get(codeium#command#LoadConfig(codeium#command#XdgConfigDir()), 'sha', s:language_server_sha)
