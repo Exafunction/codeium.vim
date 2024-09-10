@@ -252,7 +252,7 @@ endfunction
 
 function! s:ActuallyStart() abort
   let config = get(g:, 'codeium_server_config', {})
-  let chat_ports = get(g:, 'codeium_ports', {})
+  let chat_ports = get(g:, 'codeium_port_config', {})
   let manager_dir = tempname() . '/codeium/manager'
   call mkdir(manager_dir, 'p')
 

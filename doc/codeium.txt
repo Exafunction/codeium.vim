@@ -108,6 +108,21 @@ g:codeium_arch          Manually set the host architecture, accepted values
 >
                         let g:codeium_arch = "x86_64"
 <
+                                                *g:codeium_port_config*
+g:codeium_port_config
+                        Set the ports the chat client and web server use. 
+			Pass in web_server and chat_client fields to the mapping to set.
+                        Please note that if either of the ports are specified, only one 
+			window will work with codeium. 
+			That window can have as many buffers within it, but any other 
+			opened windows will not be able to use Codeium's features.
+>
+                        let g:codeium_port_config = {
+				'web_server': <Your web server port>,
+				'chat_client': <Your chat client port>
+				}
+<
+
                                                 *g:codeium_virtual_text_priority*
 g:codeium_virtual_text_priority
                         The priority used for Codeium's virtual text completions
