@@ -162,6 +162,14 @@ function! codeium#server#Start(...) abort
   endif
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
+  if empty(os)
+    if has("linux")
+      let os = "Linux"
+    elseif has("mac")
+      let os = "Darwin"
+    endif
+  endif
+
   if os ==# 'Linux' && is_arm
     let bin_suffix = 'linux_arm'
   elseif os ==# 'Linux'
