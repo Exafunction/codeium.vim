@@ -103,8 +103,8 @@ function! codeium#doc#GetDocument(bufId, curLine, curCol) abort
         \ 'editor_language': editor_language,
         \ 'language': get(s:language_enum, language, 0),
         \ 'cursor_position': {'row': a:curLine - 1, 'col': a:curCol - 1},
-        \ 'absolute_path': fnamemodify(bufname(a:bufId), ':p'),
-        \ 'relative_path': fnamemodify(bufname(a:bufId), ':')
+        \ 'absolute_uri': 'file://' .. fnamemodify(bufname(a:bufId), ':p'),
+        \ 'relative_uri': 'file://' .. fnamemodify(bufname(a:bufId), ':')
         \ }
 
   let line_ending = codeium#util#LineEndingChars(v:null)

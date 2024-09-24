@@ -1,5 +1,5 @@
-let s:language_server_version = '1.14.11'
-let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
+let s:language_server_version = '1.20.6'
+let s:language_server_sha = 'dd81543b73fa3cadf1eabeaa10cf6051b38369d4'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -186,8 +186,8 @@ function! codeium#server#Start(...) abort
   if has_key(config, 'portal_url') && !empty(config.portal_url)
     let response = system('curl -s ' . config.portal_url . '/api/version')
     if v:shell_error != 0
-      let s:language_server_version = '1.14.11'
-      let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
+      let s:language_server_version = '1.20.6'
+      let s:language_server_sha = 'dd81543b73fa3cadf1eabeaa10cf6051b38369d4'
     endif
   endif
 
