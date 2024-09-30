@@ -108,8 +108,15 @@ endfun
 
 command! CodeiumAuto :silent! call CodeiumAuto()
 
+function! CodeiumChat()
+  call codeium#Chat()
+endfun
+
+command! CodeiumChat :silent! call CodeiumChat()
+
 :amenu Plugin.Codeium.Enable\ \Codeium\ \(\:CodeiumEnable\) :call CodeiumEnable() <Esc>
 :amenu Plugin.Codeium.Disable\ \Codeium\ \(\:CodeiumDisable\) :call CodeiumDisable() <Esc>
 :amenu Plugin.Codeium.Manual\ \Codeium\ \AI\ \Autocompletion\ \(\:CodeiumManual\) :call CodeiumManual() <Esc>
 :amenu Plugin.Codeium.Automatic\ \Codeium\ \AI\ \Completion\ \(\:CodeiumAuto\) :call CodeiumAuto() <Esc>
 :amenu Plugin.Codeium.Toggle\ \Codeium\ \(\:CodeiumToggle\) :call CodeiumToggle() <Esc>
+:amenu Plugin.Codeium.Chat\ \Codeium\ \(\:CodeiumChat\) :call CodeiumChat() <Esc>

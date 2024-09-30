@@ -13,6 +13,9 @@ COMMANDS                                        *:Codeium*
                                                 *:Codeium_Auth*
 :Codeium Auth           Authenticate to Codeium.
 
+                                                *:Codeium_Chat*
+:Codeium Chat           Open Codeium Chat in a browser window
+
                                                 *:Codeium_Disable*
 :Codeium Disable        Disable Codeium completions
 
