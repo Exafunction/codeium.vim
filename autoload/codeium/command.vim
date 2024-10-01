@@ -137,6 +137,10 @@ function! s:commands.Auth(...) abort
   endif
 endfunction
 
+function s:commands.Chat(...) abort
+  call codeium#Chat()
+endfunction
+
 function! s:commands.Disable(...) abort
   let g:codeium_enabled = 0
 endfunction
