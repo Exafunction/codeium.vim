@@ -473,7 +473,7 @@ endfunction
 function! codeium#RefreshContext() abort
   " current buffer is 1
   try
-    call codeium#server#Request('RefreshContextForIdeAction', {'active_document': codeium#doc#GetDocument(1, line('.'), line('.'))})
+    call codeium#server#Request('RefreshContextForIdeAction', {'active_document': codeium#doc#GetDocument(1, line('.'), col('.'))})
   catch
     call codeium#log#Exception()
   endtry
