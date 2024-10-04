@@ -185,7 +185,7 @@ function! codeium#server#Start(...) abort
   let config = get(g:, 'codeium_server_config', {})
   if has_key(config, 'portal_url') && !empty(config.portal_url)
     let response = system('curl -s ' . config.portal_url . '/api/version')
-    if v:shell_error == '0'
+    if v:shell_error
       let s:language_server_version = response
       let s:language_server_sha = 'enterprise-' . s:language_server_version
     else
