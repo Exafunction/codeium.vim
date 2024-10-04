@@ -1,5 +1,5 @@
-let s:language_server_version = '1.14.11'
-let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
+let s:language_server_version = '1.20.8'
+let s:language_server_sha = '37f12b83df389802b7d4e293b3e1a986aca289c0'
 let s:root = expand('<sfile>:h:h:h')
 let s:bin = v:null
 
@@ -123,7 +123,7 @@ function! s:HandleGetStatusResponse(out, err, status) abort
   if a:status == 0
     " Parse the JSON response
     let response = json_decode(join(a:out, "\n"))
-    let status = get(response, 'status', {})
+    let status = response.status
     " Check if there is a message in the response and echo it
     if has_key(status, 'message') && !empty(status.message)
       echom status.message
@@ -162,14 +162,6 @@ function! codeium#server#Start(...) abort
   endif
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
 
-  if empty(os)
-    if has("linux")
-      let os = "Linux"
-    elseif has("mac")
-      let os = "Darwin"
-    endif
-  endif
-
   if os ==# 'Linux' && is_arm
     let bin_suffix = 'linux_arm'
   elseif os ==# 'Linux'
@@ -186,8 +178,8 @@ function! codeium#server#Start(...) abort
   if has_key(config, 'portal_url') && !empty(config.portal_url)
     let response = system('curl -s ' . config.portal_url . '/api/version')
     if v:shell_error != 0
-      let s:language_server_version = '1.14.11'
-      let s:language_server_sha = '071907d082576067b0c7a5f2f7659958865d751e'
+      let s:language_server_version = response
+      let s:language_server_sha = 'enterprise-' . s:language_server_version
     endif
   endif
 
@@ -260,7 +252,6 @@ endfunction
 
 function! s:ActuallyStart() abort
   let config = get(g:, 'codeium_server_config', {})
-  let chat_ports = get(g:, 'codeium_port_config', {})
   let manager_dir = tempname() . '/codeium/manager'
   call mkdir(manager_dir, 'p')
 
@@ -274,14 +265,6 @@ function! s:ActuallyStart() abort
   if has_key(config, 'api_url') && !empty(config.api_url)
     let args += ['--enterprise_mode']
     let args += ['--portal_url', get(config, 'portal_url', 'https://codeium.example.com')]
-  endif
-  " If either of these is set, only one vim window (with any number of buffers) will work with Codeium.
-  " Opening other vim windows won't be able to use Codeium features. 
-  if has_key(chat_ports, 'web_server') && !empty(chat_ports.web_server)
-    let args += ['--chat_web_server_port', chat_ports.web_server]
-  endif
-  if has_key(chat_ports, 'chat_client') && !empty(chat_ports.chat_client)
-    let args += ['--chat_client_port', chat_ports.chat_client]
   endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
