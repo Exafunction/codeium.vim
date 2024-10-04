@@ -188,10 +188,11 @@ vim-airline supports Codeium out-of-the-box since commit [3854429d](https://gith
 
 ### Launching Codeium Chat
 
-Calling the `codeium#Chat()` function will enable search and indexing in the current project and launch Codeium Chat in a new browser window.
+Calling the `codeium#Chat()` function or using the `Codeium Chat` command will enable search and indexing in the current project and launch Codeium Chat in a new browser window.
 
 ```vim
 :call codeium#Chat()
+:Codeium Chat
 ```
 
 The project root is determined by looking in Vim's current working directory for some specific files or directories to be present and goes up to parent directories until one is found.  This list of hints is user-configurable and the default value is:

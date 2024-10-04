@@ -123,7 +123,7 @@ function! s:HandleGetStatusResponse(out, err, status) abort
   if a:status == 0
     " Parse the JSON response
     let response = json_decode(join(a:out, "\n"))
-    let status = response.status
+    let status = get(response, 'status', {})
     " Check if there is a message in the response and echo it
     if has_key(status, 'message') && !empty(status.message)
       echom status.message
@@ -161,6 +161,14 @@ function! codeium#server#Start(...) abort
     silent let arch = substitute(system('uname -m'), '\n', '', '')
   endif
   let is_arm = stridx(arch, 'arm') == 0 || stridx(arch, 'aarch64') == 0
+
+  if empty(os)
+    if has("linux")
+      let os = "Linux"
+    elseif has("mac")
+      let os = "Darwin"
+    endif
+  endif
 
   if os ==# 'Linux' && is_arm
     let bin_suffix = 'linux_arm'
@@ -252,6 +260,7 @@ endfunction
 
 function! s:ActuallyStart() abort
   let config = get(g:, 'codeium_server_config', {})
+  let chat_ports = get(g:, 'codeium_port_config', {})
   let manager_dir = tempname() . '/codeium/manager'
   call mkdir(manager_dir, 'p')
 
@@ -265,6 +274,14 @@ function! s:ActuallyStart() abort
   if has_key(config, 'api_url') && !empty(config.api_url)
     let args += ['--enterprise_mode']
     let args += ['--portal_url', get(config, 'portal_url', 'https://codeium.example.com')]
+  endif
+  " If either of these is set, only one vim window (with any number of buffers) will work with Codeium.
+  " Opening other vim windows won't be able to use Codeium features.
+  if has_key(chat_ports, 'web_server') && !empty(chat_ports.web_server)
+    let args += ['--chat_web_server_port', chat_ports.web_server]
+  endif
+  if has_key(chat_ports, 'chat_client') && !empty(chat_ports.chat_client)
+    let args += ['--chat_client_port', chat_ports.chat_client]
   endif
 
   call codeium#log#Info('Launching server with manager_dir ' . manager_dir)
