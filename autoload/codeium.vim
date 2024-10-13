@@ -432,7 +432,7 @@ function BuildChatUrl(metadata, chat_port, ws_port) abort
 endfunction
 
 function! s:LaunchChat(out, err, status) abort
-  " let l:metadata = codeium#server#RequestMetadata()
+  let l:metadata = codeium#server#RequestMetadata()
   " let l:processes = json_decode(join(a:out, ''))
   " let l:chat_port = l:processes['chatClientPort']
   " let l:ws_port = l:processes['chatWebServerPort']
