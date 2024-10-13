@@ -433,9 +433,9 @@ endfunction
 
 function! s:LaunchChat(out, err, status) abort
   let l:metadata = codeium#server#RequestMetadata()
-  " let l:processes = json_decode(join(a:out, ''))
-  " let l:chat_port = l:processes['chatClientPort']
-  " let l:ws_port = l:processes['chatWebServerPort']
+  let l:processes = json_decode(join(a:out, ''))
+  let l:chat_port = l:processes['chatClientPort']
+  let l:ws_port = l:processes['chatWebServerPort']
 
   " let config = get(g:, 'codeium_server_config', {})
   " let l:has_enterprise_extension = 'false'
