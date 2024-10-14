@@ -115,8 +115,10 @@ g:codeium_arch          Manually set the host architecture, accepted values
 g:codeium_port_config
                         Set the ports the chat client and web server use.
 			Pass in web_server and chat_client fields to the mapping to set.
-                        Please note that if either of the ports are specified, only one
+                        Please note that if this option is set, only one
 			window will work with codeium.
+			It is recommended to set both the web_server and chat_client options
+			if using this.
 			That window can have as many buffers within it, but any other
 			opened windows will not be able to use Codeium's features.
 >

@@ -419,12 +419,7 @@ function! codeium#CycleOrComplete() abort
   endif
 endfunction
 
-function! s:LaunchChat(out, err, status) abort
-  let l:metadata = codeium#server#RequestMetadata()
-  let l:processes = json_decode(join(a:out, ''))
-  let l:chat_port = l:processes['chatClientPort']
-  let l:ws_port = l:processes['chatWebServerPort']
-
+function BuildChatUrl(metadata, chat_port, ws_port) abort
   let config = get(g:, 'codeium_server_config', {})
   let l:has_enterprise_extension = 'false'
   if has_key(config, 'api_url') && !empty(config.api_url)
@@ -432,7 +427,17 @@ function! s:LaunchChat(out, err, status) abort
   endif
 
   " Hard-coded to English locale and allowed telemetry.
-  let l:url = 'http://127.0.0.1:' . l:chat_port . '/?' . 'api_key=' . l:metadata.api_key . '&ide_name=' . l:metadata.ide_name . '&ide_version=' . l:metadata.ide_version . '&extension_name=' . l:metadata.extension_name . '&extension_version=' . l:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . l:ws_port . '&has_enterprise_extension=' . l:has_enterprise_extension . '&app_name=Vim&locale=en&ide_telemetry_enabled=true&has_index_service=true'
+  let l:url = 'http://127.0.0.1:' . a:chat_port . '/?' . 'api_key=' . a:metadata.api_key . '&ide_name=' . a:metadata.ide_name . '&ide_version=' . a:metadata.ide_version . '&extension_name=' . a:metadata.extension_name . '&extension_version=' . a:metadata.extension_version . '&web_server_url=ws://127.0.0.1:' . a:ws_port . '&has_enterprise_extension=' . l:has_enterprise_extension . '&app_name=Vim&locale=en&ide_telemetry_enabled=true&has_index_service=true'
+  return l:url
+endfunction
+
+function! s:LaunchChat(out, err, status) abort
+  let l:metadata = codeium#server#RequestMetadata()
+  let l:processes = json_decode(join(a:out, ''))
+  let l:chat_port = l:processes['chatClientPort']
+  let l:ws_port = l:processes['chatWebServerPort']
+
+  let l:url = BuildChatUrl(l:metadata, l:chat_port, l:ws_port)
   let l:browser = codeium#command#BrowserCommand()
   let opened_browser = v:false
   if !empty(browser)
@@ -501,6 +506,14 @@ function! codeium#Chat() abort
     call codeium#RefreshContext()
     call codeium#server#Request('GetProcesses', codeium#server#RequestMetadata(), function('s:LaunchChat', []))
     call codeium#AddTrackedWorkspace()
+    " If user has chat_ports set, they are probably using vim remotely and trying to use chat via port forwarding.
+    " In that case display the url here so that it is easier to copy, as the browser will fail to open automatically. 
+    let chat_ports = get(g:, 'codeium_port_config', {})
+    if has_key(chat_ports, 'chat_client') && !empty(chat_ports.chat_client) && has_key(chat_ports, 'web_server') && !empty(chat_ports.web_server)
+      let l:metadata = codeium#server#RequestMetadata()
+      let l:url = BuildChatUrl(l:metadata, chat_ports.chat_client, chat_ports.web_server)
+      echomsg l:url
+    endif
   catch
     call codeium#log#Exception()
   endtry
