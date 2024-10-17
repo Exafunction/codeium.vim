@@ -508,7 +508,8 @@ function! codeium#Chat() abort
     call codeium#AddTrackedWorkspace()
     " If user has chat_ports set, they are probably using vim remotely and trying to use chat via port forwarding.
     " In that case display the url here so that it is easier to copy, as the browser will fail to open automatically. 
-    if codeium#util#IsUsingRemoteChat()
+    let chat_ports = get(g:, 'codeium_port_config', {})
+    if has_key(chat_ports, 'chat_client') && !empty(chat_ports.chat_client) && has_key(chat_ports, 'web_server') && !empty(chat_ports.web_server)
       let l:metadata = codeium#server#RequestMetadata()
       let l:url = BuildChatUrl(l:metadata, chat_ports.chat_client, chat_ports.web_server)
       echomsg l:url
