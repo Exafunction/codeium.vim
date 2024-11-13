@@ -93,20 +93,22 @@ endfunction
 
 function! codeium#FlashAcceptedCompletion(text) abort
   let lines = split(a:text, "\n", 1)
+  let num_lines = len(lines)
   let start_line = line('.')
   let start_col = col('.')
   
   if !has('nvim')
     try
       let prop_ids = []
-      let current_line = start_line - len(lines) + 1
+      " Start from the current line and work backwards
+      let current_line = start_line
       
       " Handle each line of the completion
-      for i in range(len(lines))
-        let line_text = lines[i]
+      for i in range(num_lines)
+        let line_text = lines[num_lines - i - 1]
         let len = strchars(line_text)
         if len > 0
-          " For first line, account for cursor position
+          " For last line (first in completion), account for cursor position
           if i == 0
             let col_pos = start_col - len
           else
@@ -117,7 +119,7 @@ function! codeium#FlashAcceptedCompletion(text) abort
           let prop_id = prop_add(current_line, col_pos, {'length': len, 'type': 'CodeiumFlash'})
           call add(prop_ids, prop_id)
         endif
-        let current_line += 1
+        let current_line -= 1
       endfor
       
       " Remove all properties after timeout
@@ -128,14 +130,15 @@ function! codeium#FlashAcceptedCompletion(text) abort
   else
     let ns_id = nvim_create_namespace('codeium_flash')
     try
-      let current_line = start_line - len(lines)
+      " Start from the current line and work backwards
+      let current_line = start_line - 1
       
       " Handle each line of the completion
-      for i in range(len(lines))
-        let line_text = lines[i]
+      for i in range(num_lines)
+        let line_text = lines[num_lines - i - 1]
         let len = strchars(line_text)
         if len > 0
-          " For first line, account for cursor position
+          " For last line (first in completion), account for cursor position
           if i == 0
             let start_col_pos = start_col - len - 1
             let end_col_pos = start_col - 1
@@ -147,7 +150,7 @@ function! codeium#FlashAcceptedCompletion(text) abort
           " Add highlight for this line
           call nvim_buf_add_highlight(0, ns_id, 'CodeiumFlash', current_line, start_col_pos, end_col_pos)
         endif
-        let current_line += 1
+        let current_line -= 1
       endfor
       
       " Clear namespace after timeout
