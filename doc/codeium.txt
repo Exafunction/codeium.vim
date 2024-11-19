@@ -118,7 +118,9 @@ g:codeium_port_config
                         Please note that if this option is set, only one
 			window will work with codeium.
 			It is recommended to set both the web_server and chat_client options
-			if using this.
+			if using this. 
+			If you are setting this because you are using vim remotely and want chat to work
+			you will need to forward the two ports you set here, along with port 42100.
 			That window can have as many buffers within it, but any other
 			opened windows will not be able to use Codeium's features.
 >
