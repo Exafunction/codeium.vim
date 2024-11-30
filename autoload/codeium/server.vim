@@ -235,22 +235,12 @@ function! s:UnzipAndStart(status) abort
     let old_shellredir = &shellredir
     " Switch to powershell.
     let &shell = 'powershell'
-    "  set shell='C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe'
-    "  set shell=powershell
-    "  set &shell='C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe'
-    "  set shell=posh 
     set shellquote=\"
     set shellpipe=\|
-    "  set shellxquote=
     set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
-    "  set shellcmdflag=-c\ 
-    "  set shellredir=\|\ Out-File\ -Encoding\ UTF8
-    "  call system('& {Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force; . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
     call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
-    "  call system('& { . ' . shellescape(s:root . '/powershell/hello.ps1') . '; Hi-There }')
     " Restore old settings.
     let &shell = old_shell
-    "  set shell = old_shell
     let &shellquote = old_shellquote
     let &shellpipe = old_shellpipe
     let &shellxquote = old_shellxquote
