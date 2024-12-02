@@ -239,7 +239,8 @@ function! s:UnzipAndStart(status) abort
     let old_shellredir = &shellredir
     " Switch to powershell.
     let &shell = 'powershell'
-    set shellquote= shellpipe=\| shellxquote=
+    set shellquote=\"
+    set shellpipe=\|
     set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
     set shellredir=\|\ Out-File\ -Encoding\ UTF8
     call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
