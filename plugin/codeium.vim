@@ -12,10 +12,19 @@ endif
 function! s:SetStyle() abort
   if &t_Co == 256
     hi def CodeiumSuggestion guifg=#808080 ctermfg=244
+    hi def CodeiumFlash ctermbg=153 guibg=#ADD8E6 gui=bold cterm=bold
   else
     hi def CodeiumSuggestion guifg=#808080 ctermfg=8
+    hi def CodeiumFlash ctermbg=7 guibg=LightBlue gui=bold cterm=bold
   endif
   hi def link CodeiumAnnotation Normal
+
+  " Register the property types for Vim
+  if !has('nvim')
+    if empty(prop_type_get('CodeiumFlash'))
+      call prop_type_add('CodeiumFlash', {'highlight': 'CodeiumFlash'})
+    endif
+  endif
 endfunction
 
 function! s:MapTab() abort
