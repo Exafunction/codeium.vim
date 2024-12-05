@@ -243,14 +243,17 @@ function! s:UnzipAndStart(status) abort
     set shellpipe=\|
     set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
     set shellredir=\|\ Out-File\ -Encoding\ UTF8
-    call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
-    " Restore old settings.
-    let &shell = old_shell
-    let &shellquote = old_shellquote
-    let &shellpipe = old_shellpipe
-    let &shellxquote = old_shellxquote
-    let &shellcmdflag = old_shellcmdflag
-    let &shellredir = old_shellredir
+    try
+      call system('& { . ' . shellescape(s:root . '/powershell/gzip.ps1') . '; Expand-File ' . shellescape(s:bin . '.gz') . ' }')
+    finally
+      " Restore old settings.
+      let &shell = old_shell
+      let &shellquote = old_shellquote
+      let &shellpipe = old_shellpipe
+      let &shellxquote = old_shellxquote
+      let &shellcmdflag = old_shellcmdflag
+      let &shellredir = old_shellredir
+    endtry
   else
     if !executable('gzip')
       call codeium#log#Error('Failed to extract language server binary: missing `gzip`.')
