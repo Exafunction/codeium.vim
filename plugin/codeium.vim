@@ -96,6 +96,12 @@ endfunction
 
 command! CodeiumToggle :silent! call CodeiumToggle()
 
+function! CodeiumExclude() " Exclude current buffer from Codeium context
+  let b:codeium_excluded = v:false
+endfun
+
+command! CodeiumExclude :silent! call CodeiumExclude()
+
 function! CodeiumManual() " Disable the automatic triggering of completions
   let g:codeium_manual = v:true
 endfun

@@ -29,6 +29,10 @@ COMMANDS                                        *:Codeium*
 :Codeium EnableBuffer   Re-enable Codeium completions in the current
                         buffer after running :Codeium DisableBuffer
 
+                                                *:Codeium_ExcludeBuffer*
+:Codeium ExcludeBuffer  Exclude current buffer from codeium completion
+                        contexts
+
                                                 *:Codeium_Toggle*
 :Codeium Toggle         Enable Codeium completions if they are disabled.
                         Disable Codeium completions if they are enabled. Does
@@ -151,6 +155,16 @@ b:codeium_virtual_text_priority
                         g:codeium_virtual_text_priority is used.
 >
                         let b:codeium_virtual_text_priority = 1000
+<
+
+                                                          *b:codeium_excluded*
+b:codeium_excluded
+                        Buffer-local flag that controls whether the buffer is
+                        excluded from codeium's context. If not set, buffer
+                        is included as context as default. Set it to `v:true`
+                        to exclude the buffer from context.
+>
+                        let b:codeium_excluded = v:true
 <
 
 MAPS                                            *codeium-maps*
