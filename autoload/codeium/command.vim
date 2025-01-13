@@ -91,7 +91,7 @@ function! s:commands.Auth(...) abort
   endif
 
   while empty(api_key) && tries < 3
-    let command = 'curl -sS ' . register_user_url . ' ' .
+    let command = 'curl -sSL ' . register_user_url . ' ' .
           \ '--header "Content-Type: application/json" ' .
           \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
     let response = system(command)
@@ -104,7 +104,7 @@ function! s:commands.Auth(...) abort
               \ . 'Would you like to try auth without checking SSL certificate revocation? (y/n): ')
         call inputrestore()
         if useNoSsl ==? 'y'
-            let command = 'curl --ssl-no-revoke -sS ' . register_user_url . ' ' .
+            let command = 'curl --ssl-no-revoke -sSL ' . register_user_url . ' ' .
                   \ '--header "Content-Type: application/json" ' .
                   \ '--data ' . shellescape(json_encode({'firebase_id_token': auth_token}))
             let response = system(command)
