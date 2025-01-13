@@ -73,7 +73,7 @@ function! codeium#server#Request(type, data, ...) abort
       \ '/exa.language_server_pb.LanguageServerService/' . a:type
   let data = json_encode(a:data)
   let args = [
-              \ 'curl', uri,
+              \ 'curl', '-L', uri,
               \ '--header', 'Content-Type: application/json',
               \ '-d@-'
               \ ]
@@ -188,7 +188,7 @@ function! codeium#server#Start(...) abort
 
   let config = get(g:, 'codeium_server_config', {})
   if has_key(config, 'portal_url') && !empty(config.portal_url)
-    let response = system('curl -s ' . config.portal_url . '/api/version')
+    let response = system('curl -sL ' . config.portal_url . '/api/version')
     if v:shell_error == '0'
       let s:language_server_version = response
       let s:language_server_sha = 'enterprise-' . s:language_server_version
