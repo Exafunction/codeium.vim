@@ -564,3 +564,7 @@ function! codeium#ServerLeave() abort
     call job_stop(g:codeium_server_job)
   endif
 endfunction
+
+function! codeium#HasCompletion() abort
+  return s:GetCurrentCompletionItem() isnot v:null
+endfunction
