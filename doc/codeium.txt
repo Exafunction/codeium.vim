@@ -188,3 +188,7 @@ declaration:
         highlight CodeiumSuggestion guifg=#555555 ctermfg=8
 <
  vim:tw=78:et:ft=help:norl:
+
+FUNCTIONS                                       *codeium-functions*
+
+codeium#HasCompletions() - returns boolean indicating presence of completion
