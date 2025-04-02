@@ -20,7 +20,7 @@
 
 _Free, ultrafast Copilot alternative for Vim and Neovim_
 
-Windsurf autocompletes your code with AI in all major IDEs. We [launched](https://www.codeium.com/blog/codeium-copilot-alternative-in-vim) this implementation of the Windsurf plugin for Vim and Neovim to bring this modern coding superpower to more developers. Check out our [playground](https://www.codeium.com/playground) if you want to quickly try out Windsurf online.
+Windsurf autocompletes your code with AI in all major IDEs. We [launched](https://www.windsurf.com/blog/codeium-copilot-alternative-in-vim) this implementation of the Windsurf plugin for Vim and Neovim to bring this modern coding superpower to more developers. Check out our [playground](https://www.windsurf.com/playground) if you want to quickly try out Windsurf online.
 
 Contributions are welcome! Feel free to submit pull requests and issues related to the plugin.
 
@@ -35,13 +35,13 @@ Contributions are welcome! Feel free to submit pull requests and issues related 
 1. Install [Vim](https://github.com/vim/vim) (at least 9.0.0185) or [Neovim](https://github.com/neovim/neovim/releases/latest) (at
    least 0.6)
 
-2. Install `Exafunction/codeium.vim` using your vim plugin manager of
+2. Install `Exafunction/windsurf.vim` using your vim plugin manager of
    choice, or manually. See [Installation Options](#-installation-options) below.
 
-3. Run `:Codeium Auth` to set up the plugin and start using Codeium.
+3. Run `:Codeium Auth` to set up the plugin and start using Windsurf.
 
 You can run `:help codeium` for a full list of commands and configuration
-options, or see [this guide](https://www.codeium.com/vim_tutorial) for a quick tutorial on how to use Windsurf.
+options, or see [this guide](https://www.windsurf.com/vim_tutorial) for a quick tutorial on how to use Windsurf.
 
 ## 🛠️ Configuration
 
@@ -93,7 +93,7 @@ Or in Neovim (using [wbthomason/packer.nvim](https://github.com/wbthomason/packe
 ```lua
 -- Remove the `use` here if you're using folke/lazy.nvim.
 use {
-  'Exafunction/codeium.vim',
+  'Exafunction/windsurf.vim',
   config = function ()
     -- Change '<C-g>' here to any keycode you like.
     vim.keymap.set('i', '<C-g>', function () return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
