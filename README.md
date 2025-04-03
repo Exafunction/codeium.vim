@@ -209,7 +209,7 @@ Note that launching chat enables telemetry.
 
 ```lua
 {
-  'Exafunction/codeium.vim',
+  'Exafunction/windsurf.vim',
   event = 'BufEnter'
 }
 ```
@@ -217,19 +217,19 @@ Note that launching chat enables telemetry.
 ### 🔌 vim-plug
 
 ```vim
-Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
+Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
 ```
 
 ### 📦 Vundle
 
 ```vim
-Plugin 'Exafunction/codeium.vim'
+Plugin 'Exafunction/windsurf.vim'
 ```
 
 ### 📦 packer.nvim:
 
 ```vim
-use 'Exafunction/codeium.vim'
+use 'Exafunction/windsurf.vim'
 ```
 
 ### 💪 Manual
@@ -240,7 +240,7 @@ Run the following. On windows, you can replace `~/.vim` with
 `$HOME/vimfiles`:
 
 ```bash
-git clone https://github.com/Exafunction/codeium.vim ~/.vim/pack/Exafunction/start/codeium.vim
+git clone https://github.com/Exafunction/windsurf.vim ~/.vim/pack/Exafunction/start/windsurf.vim
 ```
 
 #### 💻 Neovim
@@ -249,5 +249,5 @@ Run the following. On windows, you can replace `~/.config` with
 `$HOME/AppData/Local`:
 
 ```bash
-git clone https://github.com/Exafunction/codeium.vim ~/.config/nvim/pack/Exafunction/start/codeium.vim
+git clone https://github.com/Exafunction/windsurf.vim ~/.config/nvim/pack/Exafunction/start/windsurf.vim
 ```
