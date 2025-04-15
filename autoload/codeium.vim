@@ -2,6 +2,9 @@ let s:hlgroup = 'CodeiumSuggestion'
 let s:request_nonce = 0
 let s:using_codeium_status = 0
 
+" Add global variable for flash text
+let g:codeium_flash_text = ''
+
 if !has('nvim')
   if empty(prop_type_get(s:hlgroup))
     call prop_type_add(s:hlgroup, {'highlight': s:hlgroup})
@@ -67,11 +70,6 @@ function! s:CompletionInserter(current_completion, insert_text) abort
   if end_offset - start_offset > 0
     let delete_bytes = end_offset - start_offset
     let delete_chars = strchars(strpart(getline('.'), 0, delete_bytes))
-    " We insert a space, escape to normal mode, then delete the inserted space.
-    " This lets us "accept" any auto-inserted indentation which is otherwise
-    " removed when we switch to normal mode.
-    " \"_ sequence makes sure to delete to the void register.
-    " This way our current yank is not overridden.
     let delete_range = " \<Esc>\"_x0\"_d" . delete_chars . 'li'
   endif
 
@@ -83,8 +81,84 @@ function! s:CompletionInserter(current_completion, insert_text) abort
   else
     let cursor_text = "\<C-O>:exe 'go' line2byte(line('.'))+col('.')+(" . delta . ")\<CR>"
   endif
+  
   call codeium#server#Request('AcceptCompletion', {'metadata': codeium#server#RequestMetadata(), 'completion_id': current_completion.completion.completionId})
-  return delete_range . insert_text . cursor_text
+  
+  " Schedule the flash effect to occur after the text is inserted
+  let g:codeium_flash_text = text
+  let flash_cmd = "\<C-R>\<C-O>=execute('call timer_start(10, {-> codeium#FlashAcceptedCompletion(g:codeium_flash_text)})')\<CR>"
+  
+  return delete_range . insert_text . cursor_text . flash_cmd
+endfunction
+
+function! codeium#FlashAcceptedCompletion(text) abort
+  let lines = split(a:text, "\n", 1)
+  let num_lines = len(lines)
+  let start_line = line('.')
+  let start_col = col('.')
+  
+  if !has('nvim')
+    try
+      let prop_ids = []
+      " Start from the current line and work backwards
+      let current_line = start_line
+      
+      " Handle each line of the completion
+      for i in range(num_lines)
+        let line_text = lines[num_lines - i - 1]
+        let len = strchars(line_text)
+        if len > 0
+          " For last line (first in completion), account for cursor position
+          if i == 0
+            let col_pos = start_col - len
+          else
+            let col_pos = 1
+          endif
+          
+          " Add property for this line
+          let prop_id = prop_add(current_line, col_pos, {'length': len, 'type': 'CodeiumFlash'})
+          call add(prop_ids, prop_id)
+        endif
+        let current_line -= 1
+      endfor
+      
+      " Remove all properties after timeout
+      call timer_start(200, {-> execute('for id in ' . string(prop_ids) . ' | silent! call prop_remove({"id": id, "all": 1}) | endfor')})
+    catch
+      echom "Flash error: " . v:exception
+    endtry
+  else
+    let ns_id = nvim_create_namespace('codeium_flash')
+    try
+      " Start from the current line and work backwards
+      let current_line = start_line - 1
+      
+      " Handle each line of the completion
+      for i in range(num_lines)
+        let line_text = lines[num_lines - i - 1]
+        let len = strchars(line_text)
+        if len > 0
+          " For last line (first in completion), account for cursor position
+          if i == 0
+            let start_col_pos = start_col - len - 1
+            let end_col_pos = start_col - 1
+          else
+            let start_col_pos = 0
+            let end_col_pos = len
+          endif
+          
+          " Add highlight for this line
+          call nvim_buf_add_highlight(0, ns_id, 'CodeiumFlash', current_line, start_col_pos, end_col_pos)
+        endif
+        let current_line -= 1
+      endfor
+      
+      " Clear namespace after timeout
+      call timer_start(200, {-> nvim_buf_clear_namespace(0, ns_id, 0, -1)})
+    catch
+      echom "Flash error: " . v:exception
+    endtry
+  endif
 endfunction
 
 function! codeium#Accept() abort
