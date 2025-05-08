@@ -87,9 +87,22 @@ function! s:CompletionInserter(current_completion, insert_text) abort
   return delete_range . insert_text . cursor_text
 endfunction
 
-function! codeium#Accept() abort
+function! codeium#Accept(...) abort
   let current_completion = s:GetCurrentCompletionItem()
-  return s:CompletionInserter(current_completion, current_completion is v:null ? '' : current_completion.completion.text)
+  if current_completion is v:null
+    let default =  pumvisible() ? "\<C-N>" : "\t"
+    if a:0 > 0 && type(a:1) == v:t_func
+      try
+        return call(a:1, [])
+      catch
+        return default
+      endtry
+    else
+      return default
+    endif
+  else
+    return s:CompletionInserter(current_completion, current_completion is v:null ? '' : current_completion.completion.text)
+  endif
 endfunction
 
 function! codeium#AcceptNextWord() abort

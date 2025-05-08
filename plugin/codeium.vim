@@ -20,7 +20,22 @@ endfunction
 
 function! s:MapTab() abort
   if !get(g:, 'codeium_no_map_tab', v:false) && !get(g:, 'codeium_disable_bindings')
-    imap <script><silent><nowait><expr> <Tab> codeium#Accept()
+    let tab_map = maparg('<Tab>', 'i', 0, 1)
+    if !has_key(tab_map, 'rhs')
+      imap <script><silent><nowait><expr> <Tab> codeium#Accept()
+    elseif tab_map.rhs !~# 'codeium'
+      if tab_map.expr
+        let tab_fallback = '{ -> ' . tab_map.rhs . ' }'
+      else
+        let tab_fallback = substitute(json_encode(tab_map.rhs), '<', '\\<', 'g')
+      endif
+      let tab_fallback = substitute(tab_fallback, '<SID>', '<SNR>' . get(tab_map, 'sid') . '_', 'g')
+      if get(tab_map, 'noremap') || get(tab_map, 'script') || mapcheck('<Left>', 'i') || mapcheck('<Del>', 'i')
+        exe 'imap <script><silent><nowait><expr> <Tab> codeium#Accept(' . tab_fallback . ')'
+      else
+        exe 'imap <silent><nowait><expr>         <Tab> codeium#Accept(' . tab_fallback . ')'
+      endif
+    endif
   endif
 endfunction
 
@@ -66,6 +81,7 @@ if !get(g:, 'codeium_disable_bindings')
   endif
 endif
 
+call s:MapTab()
 call s:SetStyle()
 
 let s:dir = expand('<sfile>:h:h')
