@@ -260,7 +260,7 @@ function! s:UnzipAndStart(status) abort
     call system('chmod +x ' . s:bin)
   endif
   if !filereadable(s:bin)
-    call codeium#log#Error('Failed to download language server binary.')
+    call codeium#log#Error('Failed to download language server binary. In '.s:bin)
     return ''
   endif
   call s:ActuallyStart()
